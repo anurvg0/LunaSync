@@ -1,1 +1,2221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a0a1e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="LunaSync — Emotionally intelligent relationship wellness">
+<title>LunaSync</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 
+<style>
+:root {
+  --accent: #d4688a;
+  --accent2: #9b6bb5;
+  --accent3: #e8a4b8;
+  --bg-deep: #0f0814;
+  --bg-mid: #1a0f22;
+  --bg-surface: #231630;
+  --bg-glass: rgba(255,255,255,0.04);
+  --bg-glass-hover: rgba(255,255,255,0.07);
+  --text-primary: #f5eef8;
+  --text-secondary: rgba(245,238,248,0.6);
+  --text-muted: rgba(245,238,248,0.35);
+  --glow: rgba(212,104,138,0.3);
+  --glow2: rgba(155,107,181,0.25);
+  --border: rgba(255,255,255,0.08);
+  --border-accent: rgba(212,104,138,0.25);
+  --phase-color: #d4688a;
+  --phase-glow: rgba(212,104,138,0.35);
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --shadow-glow: 0 0 40px var(--glow), 0 0 80px rgba(212,104,138,0.1);
+  --transition: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-follicular { --phase-color: #a8c9e8; --phase-glow: rgba(168,201,232,0.3); --accent: #7eb8d9; --accent2: #8ab0cf; --glow: rgba(126,184,217,0.3); }
+.theme-ovulation { --phase-color: #f4b85a; --phase-glow: rgba(244,184,90,0.3); --accent: #e8a040; --accent2: #d4904a; --glow: rgba(232,160,64,0.3); }
+.theme-luteal { --phase-color: #b87dc4; --phase-glow: rgba(184,125,196,0.3); --accent: #a56ab8; --accent2: #9060a8; --glow: rgba(165,106,184,0.3); }
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  overscroll-behavior: none;
+}
+
+/* AMBIENT BACKGROUND */
+.ambient-bg {
+  position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+}
+.ambient-blob {
+  position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.35;
+  animation: blobFloat 12s ease-in-out infinite;
+  transition: background 2s var(--ease);
+}
+.blob1 { width: 500px; height: 500px; background: radial-gradient(circle, var(--accent) 0%, transparent 70%); top: -150px; left: -100px; animation-delay: 0s; }
+.blob2 { width: 400px; height: 400px; background: radial-gradient(circle, var(--accent2) 0%, transparent 70%); bottom: 0; right: -100px; animation-delay: -4s; }
+.blob3 { width: 300px; height: 300px; background: radial-gradient(circle, var(--accent3) 0%, transparent 70%); top: 40%; left: 30%; animation-delay: -8s; opacity: 0.2; }
+
+@keyframes blobFloat {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33% { transform: translate(30px,-30px) scale(1.05); }
+  66% { transform: translate(-20px,20px) scale(0.95); }
+}
+
+/* PARTICLES */
+.particle-field { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+.particle {
+  position: absolute; border-radius: 50%; background: var(--accent);
+  animation: particleDrift linear infinite;
+  opacity: 0;
+}
+@keyframes particleDrift {
+  0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.3; }
+  100% { transform: translateY(-100px) translateX(var(--drift)); opacity: 0; }
+}
+
+/* MAIN LAYOUT */
+.app-container {
+  position: relative; z-index: 2;
+  max-width: 430px; margin: 0 auto;
+  min-height: 100vh; display: flex; flex-direction: column;
+  padding-bottom: 100px;
+}
+
+/* ONBOARDING */
+#onboarding {
+  position: fixed; inset: 0; z-index: 1000;
+  background: var(--bg-deep);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 32px 24px;
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+}
+#onboarding.hidden { opacity: 0; transform: scale(1.05); pointer-events: none; }
+
+.onboard-logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 42px; letter-spacing: -1px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  margin-bottom: 8px;
+  animation: logoGlow 3s ease-in-out infinite;
+}
+@keyframes logoGlow {
+  0%,100% { filter: drop-shadow(0 0 20px var(--glow)); }
+  50% { filter: drop-shadow(0 0 40px var(--glow)); }
+}
+.onboard-tagline { color: var(--text-secondary); font-size: 15px; text-align: center; margin-bottom: 48px; letter-spacing: 0.3px; }
+
+.onboard-steps { width: 100%; }
+.onboard-step { display: none; animation: stepIn 0.5s var(--transition); }
+.onboard-step.active { display: block; }
+@keyframes stepIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+
+.step-label {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px; margin-bottom: 8px; color: var(--text-primary);
+}
+.step-sublabel { color: var(--text-secondary); font-size: 14px; margin-bottom: 24px; line-height: 1.5; }
+
+.input-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+.luna-input {
+  background: var(--bg-glass); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 16px 18px;
+  color: var(--text-primary); font-family: 'DM Sans', sans-serif;
+  font-size: 16px; outline: none; width: 100%;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.luna-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(212,104,138,0.15); }
+.luna-input::placeholder { color: var(--text-muted); }
+label.field-label { font-size: 13px; color: var(--text-secondary); letter-spacing: 0.5px; text-transform: uppercase; }
+
+.step-dots { display: flex; gap: 8px; justify-content: center; margin-bottom: 24px; }
+.step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: all 0.3s; }
+.step-dot.active { background: var(--accent); width: 24px; border-radius: 4px; }
+
+.btn-primary {
+  width: 100%; padding: 18px; border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: white; font-family: 'DM Sans', sans-serif;
+  font-size: 16px; font-weight: 500; border: none; cursor: pointer;
+  position: relative; overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.3s;
+  box-shadow: 0 8px 32px var(--glow);
+}
+.btn-primary::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+  opacity: 0; transition: opacity 0.3s;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px var(--glow); }
+.btn-primary:hover::after { opacity: 1; }
+.btn-primary:active { transform: scale(0.97); }
+
+.phase-card-select {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;
+}
+.phase-select-item {
+  background: var(--bg-glass); border: 1.5px solid var(--border);
+  border-radius: var(--radius-md); padding: 16px 12px; cursor: pointer;
+  text-align: center; transition: all 0.3s;
+}
+.phase-select-item.selected { border-color: var(--accent); background: rgba(212,104,138,0.1); }
+.phase-select-item .phase-icon { font-size: 28px; display: block; margin-bottom: 6px; }
+.phase-select-item .phase-name { font-size: 13px; color: var(--text-secondary); }
+
+/* NAV */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 430px; z-index: 100;
+  background: rgba(15,8,20,0.85); backdrop-filter: blur(24px);
+  border-top: 1px solid var(--border);
+  padding: 12px 0 max(12px, env(safe-area-inset-bottom));
+  display: flex; justify-content: space-around; align-items: center;
+}
+.nav-item {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 8px 16px; border-radius: var(--radius-md); cursor: pointer;
+  transition: all 0.3s; border: none; background: none; color: var(--text-muted);
+  min-width: 60px;
+}
+.nav-item.active { color: var(--accent); }
+.nav-item svg { width: 22px; height: 22px; transition: transform 0.3s var(--transition); }
+.nav-item.active svg { transform: scale(1.15); filter: drop-shadow(0 0 8px var(--glow)); }
+.nav-label { font-size: 10px; font-weight: 500; letter-spacing: 0.3px; }
+
+/* PAGES */
+.page { display: none; padding: 0 16px; }
+.page.active { display: block; animation: pageIn 0.4s var(--ease); }
+@keyframes pageIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+/* HEADER */
+.app-header {
+  padding: 56px 16px 16px; display: flex; align-items: center; justify-content: space-between;
+}
+.header-logo {
+  font-family: 'DM Serif Display', serif; font-size: 26px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.header-right { display: flex; align-items: center; gap: 12px; }
+.icon-btn {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--bg-glass); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.3s; color: var(--text-secondary);
+}
+.icon-btn:hover { background: var(--bg-glass-hover); border-color: var(--border-accent); }
+
+/* SECTION LABELS */
+.section-label {
+  font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 12px; margin-top: 28px;
+  padding: 0 2px;
+}
+
+/* GLASS CARD */
+.glass-card {
+  background: var(--bg-glass); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 20px;
+  backdrop-filter: blur(12px); transition: all 0.3s;
+  position: relative; overflow: hidden;
+}
+.glass-card::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 60%);
+  pointer-events: none;
+}
+.glass-card:hover { background: var(--bg-glass-hover); border-color: var(--border-accent); }
+
+/* PHASE HERO CARD */
+.phase-hero {
+  background: linear-gradient(135deg, rgba(212,104,138,0.15), rgba(155,107,181,0.1));
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-xl); padding: 28px 24px;
+  position: relative; overflow: hidden; margin-bottom: 16px;
+}
+.phase-hero::after {
+  content: ''; position: absolute; top: -50%; right: -30%;
+  width: 300px; height: 300px; border-radius: 50%;
+  background: radial-gradient(circle, var(--phase-glow) 0%, transparent 70%);
+  animation: heroGlow 4s ease-in-out infinite;
+}
+@keyframes heroGlow {
+  0%,100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.7; }
+}
+
+.phase-name-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(212,104,138,0.15); border: 1px solid var(--border-accent);
+  border-radius: 20px; padding: 5px 12px;
+  font-size: 12px; color: var(--accent); font-weight: 500;
+  letter-spacing: 0.3px; margin-bottom: 16px;
+}
+.phase-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulseDot 2s ease-in-out infinite; }
+@keyframes pulseDot { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.7; } }
+
+.phase-hero-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px; line-height: 1.2; margin-bottom: 8px;
+}
+.phase-hero-sub { color: var(--text-secondary); font-size: 14px; line-height: 1.5; margin-bottom: 20px; }
+
+.phase-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.phase-stat { text-align: center; }
+.phase-stat-val { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--accent); font-weight: 600; }
+.phase-stat-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+/* CYCLE RING */
+.cycle-ring-wrap {
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px 0; position: relative;
+}
+.ring-svg { transform: rotate(-90deg); }
+.ring-track { fill: none; stroke: rgba(255,255,255,0.06); }
+.ring-progress {
+  fill: none; stroke-linecap: round;
+  stroke: url(#ringGradient);
+  filter: drop-shadow(0 0 8px var(--glow));
+  transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.ring-center {
+  position: absolute; text-align: center;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.ring-day { font-family: 'Playfair Display', serif; font-size: 44px; font-weight: 600; line-height: 1; color: var(--accent); }
+.ring-day-label { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.ring-phase { font-size: 13px; color: var(--text-secondary); margin-top: 6px; font-style: italic; }
+
+/* EMOTIONAL FORECAST */
+.forecast-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.forecast-item {
+  background: var(--bg-glass); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 16px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.forecast-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; }
+.forecast-val { font-size: 15px; color: var(--text-primary); font-weight: 500; }
+.forecast-bar-wrap { height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+.forecast-bar { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 1.2s cubic-bezier(0.4,0,0.2,1); }
+
+/* INSIGHT CARDS */
+.insight-card {
+  background: var(--bg-glass); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 12px;
+  cursor: pointer; transition: all 0.35s;
+}
+.insight-card:hover { border-color: var(--border-accent); }
+.insight-header { padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; }
+.insight-icon-wrap {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; box-shadow: 0 4px 16px var(--glow);
+}
+.insight-icon-wrap svg { width: 20px; height: 20px; color: white; }
+.insight-title-wrap { flex: 1; margin: 0 14px; }
+.insight-title { font-size: 15px; font-weight: 500; margin-bottom: 2px; }
+.insight-preview { font-size: 13px; color: var(--text-secondary); }
+.insight-chevron { color: var(--text-muted); transition: transform 0.35s var(--transition); }
+.insight-card.expanded .insight-chevron { transform: rotate(180deg); }
+
+.insight-body {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.4,0,0.2,1), padding 0.3s;
+}
+.insight-card.expanded .insight-body { max-height: 600px; }
+.insight-body-inner { padding: 0 20px 20px; }
+.insight-text { color: var(--text-secondary); font-size: 14px; line-height: 1.7; margin-bottom: 12px; }
+.insight-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.insight-tag {
+  font-size: 12px; padding: 5px 12px; border-radius: 20px;
+  background: rgba(212,104,138,0.1); border: 1px solid rgba(212,104,138,0.2);
+  color: var(--accent);
+}
+
+/* RADAR */
+.radar-wrap { padding: 20px; display: flex; flex-direction: column; align-items: center; }
+.radar-svg { filter: drop-shadow(0 0 20px var(--glow2)); }
+.radar-labels { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 20px; width: 100%; }
+.radar-metric {
+  text-align: center; padding: 10px;
+  background: var(--bg-glass); border-radius: var(--radius-md); border: 1px solid var(--border);
+}
+.radar-metric-val { font-size: 18px; font-weight: 600; color: var(--accent); }
+.radar-metric-label { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+/* SUPPORT CARDS */
+.support-list { display: flex; flex-direction: column; gap: 10px; }
+.support-item {
+  display: flex; align-items: flex-start; gap: 14px;
+  background: var(--bg-glass); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 16px;
+  transition: all 0.3s;
+}
+.support-item:hover { border-color: var(--border-accent); transform: translateX(4px); }
+.support-num {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600; color: white;
+}
+.support-text { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+.support-text strong { color: var(--text-primary); font-weight: 500; }
+
+/* AVOID LIST */
+.avoid-list { display: flex; flex-direction: column; gap: 10px; }
+.avoid-item {
+  display: flex; align-items: flex-start; gap: 14px;
+  background: rgba(255,80,80,0.04); border: 1px solid rgba(255,80,80,0.1);
+  border-radius: var(--radius-md); padding: 16px;
+}
+.avoid-x {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(255,80,80,0.15); border: 1px solid rgba(255,80,80,0.25);
+  display: flex; align-items: center; justify-content: center;
+  color: #ff8080; font-size: 14px;
+}
+.avoid-text { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+
+/* SMART INSIGHTS */
+.smart-insights { display: flex; flex-direction: column; gap: 10px; }
+.smart-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px; border-radius: var(--radius-md);
+  background: var(--bg-glass); border: 1px solid var(--border);
+  animation: insightSlide 0.5s var(--ease) both;
+}
+@keyframes insightSlide { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
+.smart-orb {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  background: var(--accent); box-shadow: 0 0 8px var(--glow);
+  animation: pulseDot 2s ease-in-out infinite;
+}
+.smart-text { font-size: 14px; color: var(--text-secondary); line-height: 1.4; font-style: italic; }
+
+/* HORMONE VIZ */
+.hormone-viz { padding: 8px 0; overflow: hidden; }
+.hormone-row { margin-bottom: 20px; }
+.hormone-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.hormone-name { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+.hormone-val { font-size: 13px; color: var(--accent); }
+.hormone-wave-wrap { height: 48px; position: relative; overflow: hidden; border-radius: var(--radius-sm); background: rgba(255,255,255,0.02); }
+.hormone-wave { position: absolute; inset: 0; }
+
+/* TIMELINE */
+.timeline-scroll { overflow-x: auto; padding-bottom: 8px; -ms-overflow-style: none; scrollbar-width: none; }
+.timeline-scroll::-webkit-scrollbar { display: none; }
+.timeline-inner { display: flex; gap: 0; padding: 16px 4px; min-width: max-content; align-items: center; }
+.timeline-item { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 80px; }
+.timeline-event-dot {
+  width: 12px; height: 12px; border-radius: 50%; position: relative; z-index: 1;
+  box-shadow: 0 0 12px var(--glow);
+}
+.timeline-line { flex: 1; height: 2px; background: var(--border); min-width: 32px; }
+.timeline-date { font-size: 11px; color: var(--text-muted); }
+.timeline-event-label { font-size: 12px; color: var(--text-secondary); text-align: center; }
+.timeline-event-today .timeline-event-dot { transform: scale(1.4); animation: pulseDot 2s infinite; }
+
+/* JOURNAL */
+.journal-entry {
+  background: var(--bg-glass); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 20px; margin-bottom: 12px;
+}
+.journal-date { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+.journal-mood-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.mood-chip {
+  font-size: 13px; padding: 6px 14px; border-radius: 20px;
+  background: var(--bg-glass); border: 1px solid var(--border);
+  cursor: pointer; transition: all 0.25s; color: var(--text-secondary);
+}
+.mood-chip.selected { background: rgba(212,104,138,0.15); border-color: var(--accent); color: var(--accent); }
+.luna-textarea {
+  width: 100%; background: var(--bg-glass); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 14px; color: var(--text-primary);
+  font-family: 'DM Sans', sans-serif; font-size: 15px; resize: none;
+  outline: none; min-height: 100px; line-height: 1.6;
+  transition: border-color 0.3s;
+}
+.luna-textarea:focus { border-color: var(--accent); }
+.luna-textarea::placeholder { color: var(--text-muted); }
+
+/* SYMPTOM GRID */
+.symptom-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.symptom-item {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  background: var(--bg-glass); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 14px 8px; cursor: pointer;
+  transition: all 0.25s; text-align: center;
+}
+.symptom-item.active { border-color: var(--accent); background: rgba(212,104,138,0.1); }
+.symptom-icon { font-size: 22px; }
+.symptom-label { font-size: 11px; color: var(--text-muted); }
+.symptom-item.active .symptom-label { color: var(--accent); }
+
+/* ANALYTICS */
+.analytics-card {
+  background: var(--bg-glass); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 20px; margin-bottom: 12px;
+}
+.analytics-title { font-size: 15px; font-weight: 500; margin-bottom: 16px; }
+.mini-chart { height: 80px; display: flex; align-items: flex-end; gap: 4px; }
+.chart-bar {
+  flex: 1; border-radius: 4px 4px 0 0;
+  background: linear-gradient(180deg, var(--accent), rgba(212,104,138,0.3));
+  transition: height 1s cubic-bezier(0.4,0,0.2,1);
+  min-height: 4px;
+}
+.chart-bar.accent2 { background: linear-gradient(180deg, var(--accent2), rgba(155,107,181,0.3)); }
+
+/* SETTINGS */
+.settings-section { margin-bottom: 28px; }
+.settings-section-title { font-size: 13px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+.settings-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 18px; background: var(--bg-glass); border: 1px solid var(--border);
+  border-radius: var(--radius-md); margin-bottom: 8px; cursor: pointer;
+  transition: all 0.25s;
+}
+.settings-item:hover { background: var(--bg-glass-hover); border-color: var(--border-accent); }
+.settings-item-left { display: flex; align-items: center; gap: 14px; }
+.settings-item-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.settings-item-icon svg { width: 18px; height: 18px; color: white; }
+.settings-item-text { font-size: 15px; }
+.settings-item-right { color: var(--text-muted); }
+
+/* THEME PRESETS */
+.theme-presets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+.theme-preset {
+  border-radius: var(--radius-md); height: 56px; cursor: pointer;
+  border: 2px solid transparent; transition: all 0.3s;
+  position: relative; overflow: hidden;
+}
+.theme-preset.active { border-color: white; box-shadow: 0 4px 16px rgba(255,255,255,0.2); }
+.theme-preset-label {
+  position: absolute; bottom: 6px; left: 0; right: 0;
+  text-align: center; font-size: 10px; color: rgba(255,255,255,0.8);
+  font-weight: 500; text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+/* EMERGENCY MODE */
+.emergency-fab {
+  position: fixed; bottom: 100px; right: 20px; z-index: 90;
+  width: 56px; height: 56px; border-radius: 28px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; box-shadow: 0 8px 32px var(--glow), 0 0 0 0 rgba(212,104,138,0.4);
+  animation: fabPulse 3s ease-in-out infinite; border: none;
+  transition: transform 0.3s var(--transition);
+}
+.emergency-fab:hover { transform: scale(1.1); }
+@keyframes fabPulse {
+  0%,100% { box-shadow: 0 8px 32px var(--glow), 0 0 0 0 rgba(212,104,138,0.4); }
+  50% { box-shadow: 0 8px 32px var(--glow), 0 0 0 12px rgba(212,104,138,0); }
+}
+
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(8,4,12,0.8); backdrop-filter: blur(20px);
+  display: flex; align-items: flex-end; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal-sheet {
+  background: linear-gradient(180deg, var(--bg-surface), var(--bg-mid));
+  border: 1px solid var(--border); border-bottom: none;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  width: 100%; max-width: 430px; padding: 24px;
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+  transform: translateY(100%); transition: transform 0.5s var(--transition);
+  max-height: 88vh; overflow-y: auto;
+}
+.modal-overlay.open .modal-sheet { transform: translateY(0); }
+.modal-handle { width: 36px; height: 4px; border-radius: 2px; background: var(--border); margin: 0 auto 20px; }
+.modal-title {
+  font-family: 'DM Serif Display', serif; font-size: 22px;
+  margin-bottom: 8px; color: var(--text-primary);
+}
+.modal-subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; }
+.modal-section-title { font-size: 13px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.8px; margin: 16px 0 8px; font-weight: 600; }
+
+.comfort-item {
+  background: var(--bg-glass); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 14px 16px; margin-bottom: 8px;
+}
+.comfort-item-label { font-size: 12px; color: var(--accent); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+.comfort-item-text { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+
+.never-say-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 16px; background: rgba(255,80,80,0.05);
+  border: 1px solid rgba(255,80,80,0.12); border-radius: var(--radius-md); margin-bottom: 8px;
+}
+.never-x { color: #ff7070; font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.never-text { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* SHIMMER */
+.shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2.5s linear infinite;
+}
+@keyframes shimmer { from { background-position: -200% 0; } to { background-position: 200% 0; } }
+
+/* RIPPLE */
+.btn-ripple { position: relative; overflow: hidden; }
+.btn-ripple::after { content: ''; position: absolute; border-radius: 50%; transform: scale(0); animation: ripple 0.6s linear; background: rgba(255,255,255,0.2); }
+@keyframes ripple { to { transform: scale(4); opacity: 0; } }
+
+/* DARK MODE TOGGLE */
+.toggle-switch {
+  width: 48px; height: 26px; border-radius: 13px;
+  background: var(--border); cursor: pointer; position: relative;
+  transition: background 0.3s;
+}
+.toggle-switch.on { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+.toggle-thumb {
+  position: absolute; top: 3px; left: 3px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: white; transition: transform 0.3s var(--transition);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.toggle-switch.on .toggle-thumb { transform: translateX(22px); }
+
+/* PAGE TITLES */
+.page-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px; margin-bottom: 4px;
+}
+.page-subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; }
+
+/* NOTIFICATION BADGE */
+.notif-badge {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent); position: absolute; top: 6px; right: 6px;
+  animation: pulseDot 2s infinite;
+}
+
+/* PROFILE CHIP */
+.profile-chip {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg-glass); border: 1px solid var(--border);
+  border-radius: 28px; padding: 8px 16px 8px 8px;
+  margin-bottom: 20px;
+}
+.profile-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.profile-name { font-size: 14px; font-weight: 500; }
+.profile-sub { font-size: 12px; color: var(--text-muted); }
+
+/* EMPTY STATE */
+.empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+.empty-state-icon { font-size: 40px; margin-bottom: 12px; }
+.empty-state-text { font-size: 14px; line-height: 1.6; }
+
+/* SAVE BTN */
+.save-btn {
+  width: 100%; padding: 16px; border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: white; font-size: 15px; font-weight: 500;
+  border: none; cursor: pointer; margin-top: 16px;
+  transition: transform 0.2s, box-shadow 0.3s;
+  box-shadow: 0 6px 24px var(--glow);
+}
+.save-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 32px var(--glow); }
+.save-btn:active { transform: scale(0.97); }
+
+/* RESPONSIVE DESKTOP */
+@media (min-width: 430px) {
+  .app-container { border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+  .bottom-nav { border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+  .emergency-fab { right: calc(50% - 215px + 20px); }
+  .modal-overlay { align-items: center; }
+  .modal-sheet { border-radius: var(--radius-xl); border-bottom: 1px solid var(--border); max-height: 80vh; margin-bottom: 0; }
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* PWA install banner */
+.install-banner {
+  background: linear-gradient(135deg, rgba(212,104,138,0.15), rgba(155,107,181,0.1));
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-md); padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+  cursor: pointer;
+}
+.install-banner-text { flex: 1; font-size: 13px; color: var(--text-secondary); }
+.install-banner-text strong { color: var(--text-primary); display: block; margin-bottom: 2px; }
+.install-x { color: var(--text-muted); cursor: pointer; padding: 4px; }
+</style>
+</head>
+<body>
+
+<!-- AMBIENT BACKGROUND -->
+<div class="ambient-bg">
+  <div class="ambient-blob blob1"></div>
+  <div class="ambient-blob blob2"></div>
+  <div class="ambient-blob blob3"></div>
+</div>
+<div class="particle-field" id="particleField"></div>
+
+<!-- ONBOARDING -->
+<div id="onboarding">
+  <div class="onboard-logo">LunaSync</div>
+  <div class="onboard-tagline">Understand her world. Connect on a deeper level.</div>
+
+  <div class="step-dots" id="stepDots">
+    <div class="step-dot active"></div>
+    <div class="step-dot"></div>
+    <div class="step-dot"></div>
+  </div>
+
+  <div class="onboard-steps">
+    <div class="onboard-step active" id="step1">
+      <div class="step-label">Welcome, Partner</div>
+      <div class="step-sublabel">LunaSync helps you understand her emotional world — so you can show up for her in the ways that matter most.</div>
+      <div class="input-group">
+        <label class="field-label">Her Name</label>
+        <input type="text" id="partnerName" class="luna-input" placeholder="e.g. Emma" maxlength="20">
+        <label class="field-label">Your Name</label>
+        <input type="text" id="userName" class="luna-input" placeholder="e.g. James" maxlength="20">
+      </div>
+      <button class="btn-primary" onclick="nextStep(1)">Continue →</button>
+    </div>
+
+    <div class="onboard-step" id="step2">
+      <div class="step-label">Cycle Details</div>
+      <div class="step-sublabel">These details power real-time phase calculations — no guessing, just honest insight.</div>
+      <div class="input-group">
+        <label class="field-label">Last Period Start Date</label>
+        <input type="date" id="lastPeriod" class="luna-input">
+        <label class="field-label">Cycle Length (days)</label>
+        <input type="number" id="cycleLength" class="luna-input" placeholder="28" min="21" max="45" value="28">
+        <label class="field-label">Period Duration (days)</label>
+        <input type="number" id="periodDuration" class="luna-input" placeholder="5" min="2" max="10" value="5">
+      </div>
+      <button class="btn-primary" onclick="nextStep(2)">Continue →</button>
+    </div>
+
+    <div class="onboard-step" id="step3">
+      <div class="step-label">Almost Ready</div>
+      <div class="step-sublabel">Choose a theme that feels right — you can always change it later.</div>
+      <div class="theme-presets" id="onboardThemes">
+        <div class="theme-preset active" style="background: linear-gradient(135deg, #d4688a, #9b6bb5)" data-theme="rose" onclick="selectTheme('rose', this)"><div class="theme-preset-label">Rose Bloom</div></div>
+        <div class="theme-preset" style="background: linear-gradient(135deg, #a87bc4, #7080d4)" data-theme="lavender" onclick="selectTheme('lavender', this)"><div class="theme-preset-label">Lavender</div></div>
+        <div class="theme-preset" style="background: linear-gradient(135deg, #6a2d7a, #2d1042)" data-theme="plum" onclick="selectTheme('plum', this)"><div class="theme-preset-label">Midnight Plum</div></div>
+        <div class="theme-preset" style="background: linear-gradient(135deg, #f4a0b5, #f8c8d8)" data-theme="sakura" onclick="selectTheme('sakura', this)"><div class="theme-preset-label">Sakura</div></div>
+        <div class="theme-preset" style="background: linear-gradient(135deg, #e8a878, #f0c8a0)" data-theme="peach" onclick="selectTheme('peach', this)"><div class="theme-preset-label">Peach Cream</div></div>
+        <div class="theme-preset" style="background: linear-gradient(135deg, #5899b8, #80c4d8)" data-theme="ocean" onclick="selectTheme('ocean', this)"><div class="theme-preset-label">Ocean Calm</div></div>
+      </div>
+      <button class="btn-primary" onclick="completeOnboarding()">Begin Your Journey ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="app-container" id="mainApp" style="display:none">
+
+  <div class="app-header">
+    <div class="header-logo">LunaSync</div>
+    <div class="header-right">
+      <button class="icon-btn" onclick="openEmergency()" title="Emergency comfort mode" style="position:relative">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+        <div class="notif-badge"></div>
+      </button>
+      <button class="icon-btn" onclick="showPage('settings')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- HOME PAGE -->
+  <div class="page active" id="page-home">
+    <div id="installBanner" class="install-banner" style="display:none">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M12 2L12 15M12 15L8 11M12 15L16 11"/><path d="M20 21H4"/></svg>
+      <div class="install-banner-text"><strong>Add to Home Screen</strong>Use LunaSync like a native app</div>
+      <div class="install-x" onclick="dismissInstall()">✕</div>
+    </div>
+
+    <!-- Profile chip -->
+    <div class="profile-chip" id="profileChip">
+      <div class="profile-avatar">🌙</div>
+      <div>
+        <div class="profile-name" id="profileName">Loading...</div>
+        <div class="profile-sub" id="profileSub">Cycle Tracking</div>
+      </div>
+    </div>
+
+    <!-- Phase hero -->
+    <div class="phase-hero" id="phaseHero">
+      <div class="phase-name-tag" id="phaseTag"><div class="phase-dot"></div><span id="phaseTagText">Calculating...</span></div>
+      <div class="phase-hero-title" id="phaseTitle">Understanding her cycle</div>
+      <div class="phase-hero-sub" id="phaseDesc">Setting up your personalized insights...</div>
+      <div class="phase-stats">
+        <div class="phase-stat"><div class="phase-stat-val" id="statDay">—</div><div class="phase-stat-label">Cycle Day</div></div>
+        <div class="phase-stat"><div class="phase-stat-val" id="statDaysLeft">—</div><div class="phase-stat-label">Days to Period</div></div>
+        <div class="phase-stat"><div class="phase-stat-val" id="statConf">—</div><div class="phase-stat-label">Confidence</div></div>
+      </div>
+    </div>
+
+    <!-- Cycle ring -->
+    <div class="glass-card" style="margin-bottom:16px; padding:8px 20px">
+      <div class="cycle-ring-wrap">
+        <svg class="ring-svg" width="180" height="180" viewBox="0 0 180 180">
+          <defs>
+            <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="var(--accent)"/>
+              <stop offset="100%" stop-color="var(--accent2)"/>
+            </linearGradient>
+          </defs>
+          <circle class="ring-track" cx="90" cy="90" r="76" stroke-width="10"/>
+          <circle class="ring-progress" id="ringProgress" cx="90" cy="90" r="76" stroke-width="10" stroke-dasharray="477.5" stroke-dashoffset="477.5"/>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-day" id="ringDay">—</div>
+          <div class="ring-day-label">of <span id="ringCycleLen">28</span> days</div>
+          <div class="ring-phase" id="ringPhaseName">Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Smart insights -->
+    <div class="section-label">Live Insights</div>
+    <div class="smart-insights" id="smartInsights">
+      <div class="smart-item"><div class="smart-orb"></div><div class="smart-text">Calculating personalized insights...</div></div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="section-label">Cycle Timeline</div>
+    <div class="glass-card" style="padding:12px 16px; margin-bottom:16px">
+      <div class="timeline-scroll">
+        <div class="timeline-inner" id="timelineInner"></div>
+      </div>
+    </div>
+
+    <!-- Emotional forecast -->
+    <div class="section-label">Emotional Forecast</div>
+    <div class="forecast-grid" id="forecastGrid">
+      <div class="forecast-item"><div class="forecast-label">Energy</div><div class="forecast-val" id="fcEnergy">—</div><div class="forecast-bar-wrap"><div class="forecast-bar" id="fcEnergyBar" style="width:0%"></div></div></div>
+      <div class="forecast-item"><div class="forecast-label">Sensitivity</div><div class="forecast-val" id="fcSens">—</div><div class="forecast-bar-wrap"><div class="forecast-bar" id="fcSensBar" style="width:0%"></div></div></div>
+      <div class="forecast-item"><div class="forecast-label">Affection</div><div class="forecast-val" id="fcAffection">—</div><div class="forecast-bar-wrap"><div class="forecast-bar" id="fcAffectionBar" style="width:0%"></div></div></div>
+      <div class="forecast-item"><div class="forecast-label">Social</div><div class="forecast-val" id="fcSocial">—</div><div class="forecast-bar-wrap"><div class="forecast-bar" id="fcSocialBar" style="width:0%"></div></div></div>
+    </div>
+  </div>
+
+  <!-- INSIGHTS PAGE -->
+  <div class="page" id="page-insights">
+    <div style="padding-top:8px">
+      <div class="page-title">Her World Right Now</div>
+      <div class="page-subtitle" id="insightPageSub">Emotionally intelligent guidance for today</div>
+    </div>
+
+    <!-- Hormone visualization -->
+    <div class="section-label">Hormone Levels</div>
+    <div class="glass-card" style="margin-bottom:16px">
+      <div class="hormone-viz" id="hormoneViz"></div>
+    </div>
+
+    <!-- Relationship radar -->
+    <div class="section-label">Relationship Radar</div>
+    <div class="glass-card" style="margin-bottom:16px">
+      <div class="radar-wrap">
+        <svg class="radar-svg" width="200" height="200" viewBox="0 0 200 200" id="radarSvg"></svg>
+        <div class="radar-labels" id="radarLabels"></div>
+      </div>
+    </div>
+
+    <!-- How she may feel -->
+    <div class="section-label">How She May Feel</div>
+    <div id="insightCards"></div>
+
+    <!-- Support guide -->
+    <div class="section-label">How to Support Her Today</div>
+    <div class="support-list" id="supportList"></div>
+
+    <!-- Avoid list -->
+    <div class="section-label">What to Avoid Today</div>
+    <div class="avoid-list" id="avoidList"></div>
+  </div>
+
+  <!-- JOURNAL PAGE -->
+  <div class="page" id="page-journal">
+    <div style="padding-top:8px">
+      <div class="page-title">Mood Journal</div>
+      <div class="page-subtitle">Track her patterns — understand her better</div>
+    </div>
+
+    <div class="journal-entry">
+      <div class="journal-date" id="journalDate">Today</div>
+      <div class="section-label" style="margin-top:0">How is she feeling today?</div>
+      <div class="journal-mood-row" id="moodChips">
+        <div class="mood-chip" onclick="toggleMood(this)">Happy 😊</div>
+        <div class="mood-chip" onclick="toggleMood(this)">Tired 😴</div>
+        <div class="mood-chip" onclick="toggleMood(this)">Anxious 😰</div>
+        <div class="mood-chip" onclick="toggleMood(this)">Irritable 😤</div>
+        <div class="mood-chip" onclick="toggleMood(this)">Loving ❤️</div>
+        <div class="mood-chip" onclick="toggleMood(this)">Sensitive 🥺</div>
+        <div class="mood-chip" onclick="toggleMood(this)">Calm 🌿</div>
+        <div class="mood-chip" onclick="toggleMood(this)">Sad 😢</div>
+        <div class="mood-chip" onclick="toggleMood(this)">Creative ✨</div>
+        <div class="mood-chip" onclick="toggleMood(this)">Cramps 🌊</div>
+      </div>
+      <div class="section-label">Symptoms</div>
+      <div class="symptom-grid" id="symptomGrid">
+        <div class="symptom-item" onclick="toggleSymptom(this)"><div class="symptom-icon">😴</div><div class="symptom-label">Fatigue</div></div>
+        <div class="symptom-item" onclick="toggleSymptom(this)"><div class="symptom-icon">🌊</div><div class="symptom-label">Cramps</div></div>
+        <div class="symptom-item" onclick="toggleSymptom(this)"><div class="symptom-icon">🍫</div><div class="symptom-label">Cravings</div></div>
+        <div class="symptom-item" onclick="toggleSymptom(this)"><div class="symptom-icon">🌀</div><div class="symptom-label">Bloating</div></div>
+        <div class="symptom-item" onclick="toggleSymptom(this)"><div class="symptom-icon">🤕</div><div class="symptom-label">Headache</div></div>
+        <div class="symptom-item" onclick="toggleSymptom(this)"><div class="symptom-icon">💭</div><div class="symptom-label">Brain Fog</div></div>
+      </div>
+      <div class="section-label">Notes</div>
+      <textarea class="luna-textarea" id="journalNote" placeholder="How was her day? What did you notice? What worked, what didn't..."></textarea>
+      <button class="save-btn" onclick="saveJournalEntry()">Save Entry ✦</button>
+    </div>
+
+    <div class="section-label">Recent Entries</div>
+    <div id="journalHistory"></div>
+  </div>
+
+  <!-- ANALYTICS PAGE -->
+  <div class="page" id="page-analytics">
+    <div style="padding-top:8px">
+      <div class="page-title">Cycle Analytics</div>
+      <div class="page-subtitle">Patterns, predictions, and deeper understanding</div>
+    </div>
+
+    <div class="analytics-card">
+      <div class="analytics-title">Cycle Consistency</div>
+      <div class="mini-chart" id="cycleConsistencyChart"></div>
+    </div>
+
+    <div class="analytics-card">
+      <div class="analytics-title">Mood Trend (Last 7 Days)</div>
+      <div class="mini-chart" id="moodTrendChart"></div>
+    </div>
+
+    <div class="section-label">Predictive Insights</div>
+    <div id="predictiveInsights"></div>
+
+    <div class="section-label">Phase Summary</div>
+    <div id="phaseSummaryCards"></div>
+  </div>
+
+  <!-- SETTINGS PAGE -->
+  <div class="page" id="page-settings">
+    <div style="padding-top:8px">
+      <div class="page-title">Settings</div>
+      <div class="page-subtitle">Personalize your experience</div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">Themes</div>
+      <div class="theme-presets" id="settingsThemes">
+        <div class="theme-preset" style="background: linear-gradient(135deg, #d4688a, #9b6bb5)" data-theme="rose" onclick="selectTheme('rose', this)"><div class="theme-preset-label">Rose Bloom</div></div>
+        <div class="theme-preset" style="background: linear-gradient(135deg, #a87bc4, #7080d4)" data-theme="lavender" onclick="selectTheme('lavender', this)"><div class="theme-preset-label">Lavender</div></div>
+        <div class="theme-preset" style="background: linear-gradient(135deg, #6a2d7a, #2d1042)" data-theme="plum" onclick="selectTheme('plum', this)"><div class="theme-preset-label">Midnight Plum</div></div>
+        <div class="theme-preset" style="background: linear-gradient(135deg, #f4a0b5, #f8c8d8)" data-theme="sakura" onclick="selectTheme('sakura', this)"><div class="theme-preset-label">Sakura</div></div>
+        <div class="theme-preset" style="background: linear-gradient(135deg, #e8a878, #f0c8a0)" data-theme="peach" onclick="selectTheme('peach', this)"><div class="theme-preset-label">Peach Cream</div></div>
+        <div class="theme-preset" style="background: linear-gradient(135deg, #5899b8, #80c4d8)" data-theme="ocean" onclick="selectTheme('ocean', this)"><div class="theme-preset-label">Ocean Calm</div></div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">Cycle Profile</div>
+      <div class="settings-item" onclick="showEditCycle()">
+        <div class="settings-item-left">
+          <div class="settings-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+          <div>
+            <div class="settings-item-text">Cycle Data</div>
+            <div style="font-size:12px; color:var(--text-muted)">Edit period dates and cycle length</div>
+          </div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </div>
+      <div class="settings-item" onclick="showEditProfile()">
+        <div class="settings-item-left">
+          <div class="settings-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
+          <div>
+            <div class="settings-item-text">Partner Names</div>
+            <div style="font-size:12px; color:var(--text-muted)">Update names and profile</div>
+          </div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">Data</div>
+      <div class="settings-item" onclick="exportData()">
+        <div class="settings-item-left">
+          <div class="settings-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></div>
+          <div><div class="settings-item-text">Export Data</div></div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </div>
+      <div class="settings-item" onclick="confirmClearData()">
+        <div class="settings-item-left">
+          <div class="settings-item-icon" style="background: linear-gradient(135deg,#c0392b,#8e1a12)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></div>
+          <div><div class="settings-item-text" style="color:#ff8080">Clear All Data</div></div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </div>
+    </div>
+
+    <div style="text-align:center; padding: 20px 0 8px; color:var(--text-muted); font-size:12px">
+      LunaSync v1.0 — Made with ❤️ for better relationships<br>All data stored locally on your device
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav" id="bottomNav" style="display:none">
+  <button class="nav-item active" onclick="showPage('home')" id="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+    <span class="nav-label">Home</span>
+  </button>
+  <button class="nav-item" onclick="showPage('insights')" id="nav-insights">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+    <span class="nav-label">Insights</span>
+  </button>
+  <button class="nav-item" onclick="showPage('journal')" id="nav-journal">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+    <span class="nav-label">Journal</span>
+  </button>
+  <button class="nav-item" onclick="showPage('analytics')" id="nav-analytics">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+    <span class="nav-label">Analytics</span>
+  </button>
+</nav>
+
+<!-- EMERGENCY FAB -->
+<button class="emergency-fab" id="emergencyFab" style="display:none" onclick="openEmergency()" title="She feels terrible today">
+  <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="24" height="24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="rgba(255,255,255,0.3)"></path></svg>
+</button>
+
+<!-- EMERGENCY MODAL -->
+<div class="modal-overlay" id="emergencyModal" onclick="closeModalOnOverlay(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px">
+      <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 20px var(--glow)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="20" height="20"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+      </div>
+      <div>
+        <div class="modal-title" style="margin-bottom:2px; font-size:20px">She Feels Terrible</div>
+        <div style="font-size:13px; color:var(--text-muted)">Your comfort guide — right now</div>
+      </div>
+    </div>
+
+    <div class="modal-section-title">💬 What to Say Right Now</div>
+    <div id="comfortPhrases"></div>
+
+    <div class="modal-section-title">🤍 Immediate Care Ideas</div>
+    <div id="careIdeas"></div>
+
+    <div class="modal-section-title">🍫 Comfort Foods & Drinks</div>
+    <div id="comfortFoods"></div>
+
+    <div class="modal-section-title">🚫 Never Say This</div>
+    <div id="neverSay"></div>
+
+    <button class="save-btn" onclick="closeModal('emergencyModal')">Close ✦</button>
+  </div>
+</div>
+
+<!-- EDIT CYCLE MODAL -->
+<div class="modal-overlay" id="editCycleModal" onclick="closeModalOnOverlay(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Edit Cycle Data</div>
+    <div class="input-group" style="margin-bottom:16px">
+      <label class="field-label">Last Period Start Date</label>
+      <input type="date" id="editLastPeriod" class="luna-input">
+      <label class="field-label">Cycle Length (days)</label>
+      <input type="number" id="editCycleLength" class="luna-input" min="21" max="45">
+      <label class="field-label">Period Duration (days)</label>
+      <input type="number" id="editPeriodDuration" class="luna-input" min="2" max="10">
+    </div>
+    <button class="save-btn" onclick="saveCycleEdit()">Save Changes ✦</button>
+    <button style="width:100%;padding:14px;border-radius:var(--radius-lg);background:transparent;border:1px solid var(--border);color:var(--text-secondary);font-size:15px;cursor:pointer;margin-top:10px" onclick="closeModal('editCycleModal')">Cancel</button>
+  </div>
+</div>
+
+<!-- EDIT PROFILE MODAL -->
+<div class="modal-overlay" id="editProfileModal" onclick="closeModalOnOverlay(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Edit Profile</div>
+    <div class="input-group" style="margin-bottom:16px">
+      <label class="field-label">Her Name</label>
+      <input type="text" id="editPartnerName" class="luna-input" maxlength="20">
+      <label class="field-label">Your Name</label>
+      <input type="text" id="editUserName" class="luna-input" maxlength="20">
+    </div>
+    <button class="save-btn" onclick="saveProfileEdit()">Save Changes ✦</button>
+    <button style="width:100%;padding:14px;border-radius:var(--radius-lg);background:transparent;border:1px solid var(--border);color:var(--text-secondary);font-size:15px;cursor:pointer;margin-top:10px" onclick="closeModal('editProfileModal')">Cancel</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// THEME SYSTEM
+// ============================================================
+const THEMES = {
+  rose:     { accent: '#d4688a', accent2: '#9b6bb5', accent3: '#e8a4b8' },
+  lavender: { accent: '#a87bc4', accent2: '#7080d4', accent3: '#c4a0e0' },
+  plum:     { accent: '#b060d0', accent2: '#6040a0', accent3: '#d080e8' },
+  sakura:   { accent: '#e8708a', accent2: '#d0506c', accent3: '#f4a8b8' },
+  peach:    { accent: '#d0885a', accent2: '#b86840', accent3: '#e8b090' },
+  ocean:    { accent: '#5899b8', accent2: '#4080a8', accent3: '#80c0d8' }
+};
+
+function applyTheme(name) {
+  const t = THEMES[name] || THEMES.rose;
+  const r = document.documentElement.style;
+  r.setProperty('--accent', t.accent);
+  r.setProperty('--accent2', t.accent2);
+  r.setProperty('--accent3', t.accent3);
+  r.setProperty('--glow', hexToRgba(t.accent, 0.3));
+  r.setProperty('--glow2', hexToRgba(t.accent2, 0.25));
+  r.setProperty('--border-accent', hexToRgba(t.accent, 0.25));
+  r.setProperty('--phase-color', t.accent);
+  r.setProperty('--phase-glow', hexToRgba(t.accent, 0.35));
+  // Update theme meta
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', t.accent2);
+  // Mark active in all preset grids
+  document.querySelectorAll('.theme-preset').forEach(p => {
+    p.classList.toggle('active', p.dataset.theme === name);
+  });
+  localStorage.setItem('luna_theme', name);
+}
+
+function hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function selectTheme(name, el) {
+  applyTheme(name);
+  if (el) {
+    el.closest('.theme-presets')?.querySelectorAll('.theme-preset').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+  }
+}
+
+// ============================================================
+// CYCLE ENGINE — Real Date Calculations
+// ============================================================
+function calcCycleData(lastPeriodStr, cycleLen, periodDur) {
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const lastPeriod = new Date(lastPeriodStr);
+  lastPeriod.setHours(0,0,0,0);
+
+  // How many days since last period
+  const daysSince = Math.floor((today - lastPeriod) / 86400000);
+  // Current position in cycle (1-based)
+  const cycleDay = ((daysSince % cycleLen) + cycleLen) % cycleLen + 1;
+  const cycleProgress = ((cycleDay - 1) / cycleLen) * 100;
+
+  // Next period start
+  const cyclesElapsed = Math.floor(daysSince / cycleLen);
+  const nextPeriodDate = new Date(lastPeriod.getTime() + (cyclesElapsed + 1) * cycleLen * 86400000);
+  const daysToNextPeriod = Math.floor((nextPeriodDate - today) / 86400000);
+
+  // Ovulation ≈ 14 days before next period
+  const ovulationDay = cycleLen - 14;
+  const ovulationDate = new Date(nextPeriodDate.getTime() - 14 * 86400000);
+  const daysToOvulation = Math.floor((ovulationDate - today) / 86400000);
+
+  // Fertile window: 5 days before ovulation + ovulation day
+  const fertileStart = new Date(ovulationDate.getTime() - 5 * 86400000);
+  const fertileEnd = ovulationDate;
+
+  // PMS: 5-7 days before next period
+  const pmsStart = new Date(nextPeriodDate.getTime() - 7 * 86400000);
+  const pmsEnd = new Date(nextPeriodDate.getTime() - 1 * 86400000);
+
+  // Determine phase
+  let phase, phaseDay;
+  if (cycleDay <= periodDur) {
+    phase = 'menstrual'; phaseDay = cycleDay;
+  } else if (cycleDay <= ovulationDay - 1) {
+    phase = 'follicular'; phaseDay = cycleDay - periodDur;
+  } else if (cycleDay >= ovulationDay - 1 && cycleDay <= ovulationDay + 1) {
+    phase = 'ovulation'; phaseDay = cycleDay - ovulationDay + 2;
+  } else {
+    phase = 'luteal'; phaseDay = cycleDay - (ovulationDay + 1);
+  }
+
+  // Check if today is in PMS zone
+  const isPMS = today >= pmsStart && today <= pmsEnd;
+
+  // Confidence: higher if data is recent and cycle is regular
+  const daysSinceLastPeriod = daysSince;
+  let confidence = 95;
+  if (daysSince > 90) confidence = 82;
+  if (daysSince > 180) confidence = 72;
+
+  return {
+    today, lastPeriod, cycleDay, cycleLen, periodDur,
+    cycleProgress, nextPeriodDate, daysToNextPeriod,
+    ovulationDate, daysToOvulation,
+    fertileStart, fertileEnd, pmsStart, pmsEnd,
+    phase, phaseDay, isPMS, confidence,
+    ovulationDay
+  };
+}
+
+// ============================================================
+// PHASE DATA — Emotional Intelligence Engine
+// ============================================================
+const PHASE_DATA = {
+  menstrual: {
+    name: 'Menstrual Phase',
+    emoji: '🌑',
+    shortName: 'Menstrual',
+    title: 'Rest & Inward Healing',
+    desc: 'Her body is in a natural renewal cycle. Energy is lower, emotions can feel raw, and sensitivity is heightened. This is a sacred time — she needs gentleness above all.',
+    themeClass: '',
+    gradBg: 'linear-gradient(135deg, rgba(180,60,100,0.18), rgba(120,40,80,0.12))',
+    energy: { val: 'Low', pct: 22 },
+    sensitivity: { val: 'High', pct: 88 },
+    affection: { val: 'Gentle', pct: 55 },
+    social: { val: 'Withdrawn', pct: 20 },
+    estrogen: 15, progesterone: 10, mood: 40, energyHormone: 25,
+    emotions: ['Fatigued and needing rest', 'Emotionally raw and tender', 'Craving comfort and safety', 'Less patience for stimulation', 'May feel reflective or melancholy', 'Physical discomfort affecting mood'],
+    support: [
+      { title: 'Create a sanctuary', text: 'Make sure she has everything she needs — her favorite blanket, warm drinks, and a peaceful environment.' },
+      { title: 'Be patient with silence', text: 'She may need quiet. Sit with her without filling every moment with conversation.' },
+      { title: 'Offer comfort food', text: 'Ask what she\'s craving. Warm, nourishing foods like soup, hot chocolate, or her favorite snack go a long way.' },
+      { title: 'Reduce her load', text: 'Take over chores or responsibilities without being asked. Let her genuinely rest.' },
+      { title: 'Physical warmth', text: 'A warm water bottle, extra blankets, or a gentle back rub can ease discomfort significantly.' },
+    ],
+    avoid: [
+      'Starting heavy conversations or debates today',
+      'Expecting high energy or social enthusiasm',
+      'Making her feel guilty for needing rest',
+      'Dismissing physical discomfort with "it\'s just cramps"',
+      'Overwhelming her with plans or requests',
+    ],
+    insights: [
+      'She\'s in the most physically demanding part of her cycle — patience is your superpower today.',
+      'Her uterus is doing real physical work. Treat her like she\'s healing.',
+      'Emotional sensitivity peaks during this phase — your tone matters more than your words.',
+      'Small acts of care now will be deeply remembered.',
+      'This is not a good time to bring up unsettled relationship topics.',
+    ],
+    emergency: {
+      phrases: [
+        { label: 'Reassurance', text: '"I\'m here for you. You don\'t need to explain anything — just rest."' },
+        { label: 'Acknowledgment', text: '"I know this is hard. Your comfort is all that matters to me right now."' },
+        { label: 'Presence', text: '"Tell me what you need. I\'m not going anywhere."' },
+      ],
+      care: ['Draw her a warm bath', 'Make her hot tea or warm milk', 'Put on her comfort show without asking', 'Give her a gentle head massage', 'Sit with her, quietly'],
+      foods: ['Dark chocolate', 'Warm soup or broth', 'Chamomile tea', 'Her comfort snack', 'Warm banana bread'],
+      neverSay: ['"You\'re so emotional"', '"Is it that time again?"', '"Just relax, it\'s not a big deal"', '"You\'re overreacting"', '"Other people deal with worse"'],
+    },
+    radar: { emotional: 35, sensitivity: 90, conversation: 30, affection: 50, stability: 30, social: 20 }
+  },
+  follicular: {
+    name: 'Follicular Phase',
+    emoji: '🌱',
+    shortName: 'Follicular',
+    title: 'Rising Energy & New Beginnings',
+    desc: 'Energy is rebuilding. She\'s likely feeling more optimistic, creative, and open. This is a wonderful time for connection, new experiences, and meaningful conversation.',
+    themeClass: 'theme-follicular',
+    gradBg: 'linear-gradient(135deg, rgba(100,180,220,0.15), rgba(80,150,200,0.1))',
+    energy: { val: 'Rising', pct: 65 },
+    sensitivity: { val: 'Moderate', pct: 42 },
+    affection: { val: 'Warm', pct: 70 },
+    social: { val: 'Open', pct: 72 },
+    estrogen: 65, progesterone: 20, mood: 72, energyHormone: 65,
+    emotions: ['Optimistic and forward-thinking', 'Creative and idea-driven', 'Emotionally lighter and more open', 'Curious and adventurous', 'More confident in herself', 'Interested in socializing'],
+    support: [
+      { title: 'Plan something exciting', text: 'She\'s energized and open to new experiences. Suggest a date, adventure, or something she\'s been wanting to try.' },
+      { title: 'Have meaningful conversations', text: 'Her mind is sharp and she loves deep, inspiring talks during this phase. Open up and connect intellectually.' },
+      { title: 'Be spontaneous', text: 'Surprise her with something thoughtful. She\'ll appreciate the effort and creativity.' },
+      { title: 'Encourage her dreams', text: 'She may be setting new goals or feeling inspired. Support her ideas with genuine enthusiasm.' },
+      { title: 'Match her energy', text: 'She\'s more outgoing right now. Try to meet her where she is — be present and playful.' },
+    ],
+    avoid: [
+      'Being passive or emotionally unavailable',
+      'Dismissing her excitement or new ideas',
+      'Canceling plans without good reason',
+      'Being negative or pessimistic',
+      'Bringing up unresolved issues without her initiating',
+    ],
+    insights: [
+      'Her confidence and creativity are naturally rising — celebrate that with her.',
+      'This is the best phase for making plans, setting intentions together, and dreaming together.',
+      'She\'s likely more open to deep conversation and emotional vulnerability right now.',
+      'A spontaneous gesture or surprise will land especially well.',
+      'Her energy returning isn\'t just physical — her emotional bandwidth is wider too.',
+    ],
+    emergency: {
+      phrases: [
+        { label: 'Encouragement', text: '"You seem amazing lately. I love seeing you like this."' },
+        { label: 'Connection', text: '"I want to hear everything you\'re thinking. Tell me."' },
+        { label: 'Spontaneity', text: '"Drop everything — let\'s do something just for us tonight."' },
+      ],
+      care: ['Plan a spontaneous outing', 'Surprise her with her favorite coffee', 'Write her a short note about what you love about her', 'Try something new together', 'Have an honest, heartfelt conversation'],
+      foods: ['Fresh fruit', 'Light energizing snacks', 'Her favorite cafe drink', 'Smoothies', 'Sushi or salad bowls'],
+      neverSay: ['"Stop being so enthusiastic"', '"That\'s not realistic"', '"Can we not make plans right now"', '"You\'re so different lately"'],
+    },
+    radar: { emotional: 70, sensitivity: 45, conversation: 75, affection: 72, stability: 70, social: 75 }
+  },
+  ovulation: {
+    name: 'Ovulation Phase',
+    emoji: '🌕',
+    shortName: 'Ovulation',
+    title: 'Peak Radiance & Connection',
+    desc: 'She\'s at her most radiant, confident, and magnetic. Energy peaks, social drive is high, and she feels deeply alive. This is the golden phase — meet her there.',
+    themeClass: 'theme-ovulation',
+    gradBg: 'linear-gradient(135deg, rgba(240,180,80,0.18), rgba(220,150,60,0.12))',
+    energy: { val: 'Peak', pct: 95 },
+    sensitivity: { val: 'Low', pct: 25 },
+    affection: { val: 'Very High', pct: 92 },
+    social: { val: 'Vibrant', pct: 95 },
+    estrogen: 95, progesterone: 55, mood: 90, energyHormone: 95,
+    emotions: ['Confident and radiant', 'Deeply affectionate and loving', 'Energized and socially vibrant', 'Playful and flirtatious', 'Emotionally secure and generous', 'Creative and expressive'],
+    support: [
+      { title: 'Be fully present', text: 'She\'s at her most magnetic — she wants to feel you notice. Give her your full, undivided attention.' },
+      { title: 'Express admiration', text: 'Tell her she looks beautiful. Tell her what you love about her. She\'s glowing and wants to feel seen.' },
+      { title: 'Plan your best date', text: 'This is the time for a special outing, a romantic evening, or an experience you\'ll both remember.' },
+      { title: 'Match her affection', text: 'She\'s likely initiating more closeness. Welcome it warmly. Don\'t hold back.' },
+      { title: 'Be playful', text: 'Laugh together. Be light, fun, and adventurous. She\'s in her element right now.' },
+    ],
+    avoid: [
+      'Being distracted or emotionally checked out',
+      'Missing the opportunity to connect deeply',
+      'Bringing up heavy topics when she\'s thriving',
+      'Taking her energy for granted',
+      'Being cold or distant — she\'ll notice and feel it',
+    ],
+    insights: [
+      'She\'s at her emotional and physical peak — this is the best time for quality, connected time together.',
+      'Her natural charisma is at its highest. Appreciate it openly.',
+      'Affection and physical connection are deeply important to her right now.',
+      'What you do together in this window is memorable — make it count.',
+      'She\'s emotionally generous and secure — if you need to resolve something, this is a good time.',
+    ],
+    emergency: {
+      phrases: [
+        { label: 'Affirmation', text: '"You are absolutely radiant. I mean that."' },
+        { label: 'Desire', text: '"I love being with you. You make everything better."' },
+        { label: 'Deep connection', text: '"Let\'s do something that\'s just ours. What do you want?"' },
+      ],
+      care: ['Plan a surprise romantic evening', 'Take her somewhere special', 'Tell her how attractive she is', 'Do something spontaneous', 'Write her a heartfelt message'],
+      foods: ['Oysters or her favorite indulgence', 'Wine and cheese', 'A beautiful dinner', 'Her favorite dessert', 'Something special and memorable'],
+      neverSay: ['"Not tonight"', '"I\'m too tired for this"', '"Can we reschedule everything?"', '"You\'re being clingy"'],
+    },
+    radar: { emotional: 88, sensitivity: 22, conversation: 85, affection: 95, stability: 88, social: 95 }
+  },
+  luteal: {
+    name: 'Luteal Phase',
+    emoji: '🌘',
+    shortName: 'Luteal',
+    title: 'Inward Intensity & Depth',
+    desc: 'Progesterone rises and mood becomes more complex. She may feel more introspective, emotionally sensitive, and need reassurance. Your steady, grounded presence is her anchor.',
+    themeClass: 'theme-luteal',
+    gradBg: 'linear-gradient(135deg, rgba(160,100,200,0.18), rgba(120,70,160,0.12))',
+    energy: { val: 'Declining', pct: 45 },
+    sensitivity: { val: 'High', pct: 78 },
+    affection: { val: 'Needy', pct: 68 },
+    social: { val: 'Selective', pct: 42 },
+    estrogen: 50, progesterone: 75, mood: 55, energyHormone: 48,
+    emotions: ['More emotionally introspective', 'Sensitive to tone and words', 'May feel unexplained sadness or worry', 'Cravings and comfort-seeking', 'Needing validation and reassurance', 'Lower tolerance for stress'],
+    support: [
+      { title: 'Over-reassure her', text: 'Tell her she\'s loved, she\'s beautiful, and everything is okay — more than you think is necessary. It matters enormously.' },
+      { title: 'Don\'t take moods personally', text: 'Hormonal shifts are real. If she seems irritable or distant, it\'s not about you. Stay grounded and consistent.' },
+      { title: 'Reduce friction', text: 'Pick battles wisely. This isn\'t the time for petty disagreements — stay soft and accommodating where possible.' },
+      { title: 'Be her safe space', text: 'Create an environment where she can express emotions without judgment. Listen more, advise less.' },
+      { title: 'Comfort rituals', text: 'Familiar, soothing activities — her favorite movie, cozy evenings, simple routines — are more valuable than novelty right now.' },
+    ],
+    avoid: [
+      'Saying "you\'re overreacting" under any circumstance',
+      'Starting arguments or bringing up complaints',
+      'Being dismissive of her emotional needs',
+      'Making her feel like a burden',
+      'Withdrawing emotionally when she needs you most',
+      'Pointing out that she\'s "different" or "moody"',
+    ],
+    insights: [
+      'Her emotional needs are higher right now — meeting them is an act of love.',
+      'This phase can feel harder for both of you, but your consistency is everything.',
+      'She\'s not looking for solutions. She\'s looking to feel understood.',
+      'Small validations — "I understand," "That makes sense" — are extraordinarily powerful.',
+      'If PMS symptoms are intense, consider suggesting she track them to discuss with her doctor.',
+    ],
+    emergency: {
+      phrases: [
+        { label: 'Validation', text: '"Your feelings make complete sense to me. I\'m here."' },
+        { label: 'Reassurance', text: '"Nothing about how you feel changes how much I love you."' },
+        { label: 'Safety', text: '"You don\'t have to explain yourself. I\'ve got you."' },
+      ],
+      care: ['Order her favorite comfort food', 'Run her a warm bath with candles', 'Hold her without needing to fix anything', 'Put on her comfort playlist', 'Let her vent without offering solutions'],
+      foods: ['Dark chocolate', 'Warm cookies or pastries', 'Her absolute comfort meal', 'Soothing herbal tea', 'Magnesium-rich snacks (banana, dark leafy greens)'],
+      neverSay: ['"You\'re being irrational"', '"It\'s just PMS"', '"Why are you always like this before your period"', '"You\'re so dramatic"', '"I can\'t deal with you right now"'],
+    },
+    radar: { emotional: 65, sensitivity: 80, conversation: 55, affection: 68, stability: 42, social: 42 }
+  }
+};
+
+// ============================================================
+// APP STATE
+// ============================================================
+let appState = {
+  partnerName: '', userName: '',
+  lastPeriod: '', cycleLength: 28, periodDuration: 5,
+  theme: 'rose', cycleData: null,
+  journalEntries: [],
+  currentStep: 1
+};
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem('luna_state');
+    if (saved) appState = { ...appState, ...JSON.parse(saved) };
+    const theme = localStorage.getItem('luna_theme');
+    if (theme) appState.theme = theme;
+  } catch(e) {}
+}
+
+function saveState() {
+  try { localStorage.setItem('luna_state', JSON.stringify(appState)); } catch(e) {}
+}
+
+// ============================================================
+// ONBOARDING
+// ============================================================
+let currentOnboardStep = 1;
+
+function nextStep(step) {
+  if (step === 1) {
+    const name = document.getElementById('partnerName').value.trim();
+    const uname = document.getElementById('userName').value.trim();
+    if (!name) { document.getElementById('partnerName').focus(); return; }
+    appState.partnerName = name;
+    appState.userName = uname || 'Partner';
+  }
+  if (step === 2) {
+    const lp = document.getElementById('lastPeriod').value;
+    const cl = parseInt(document.getElementById('cycleLength').value) || 28;
+    const pd = parseInt(document.getElementById('periodDuration').value) || 5;
+    if (!lp) { document.getElementById('lastPeriod').focus(); return; }
+    appState.lastPeriod = lp;
+    appState.cycleLength = cl;
+    appState.periodDuration = pd;
+  }
+  currentOnboardStep++;
+  document.getElementById(`step${step}`).classList.remove('active');
+  document.getElementById(`step${currentOnboardStep}`).classList.add('active');
+  document.querySelectorAll('.step-dot').forEach((d,i) => {
+    d.classList.toggle('active', i < currentOnboardStep);
+  });
+}
+
+function completeOnboarding() {
+  appState.onboarded = true;
+  saveState();
+  document.getElementById('onboarding').classList.add('hidden');
+  setTimeout(() => {
+    document.getElementById('onboarding').style.display = 'none';
+    initMainApp();
+  }, 800);
+}
+
+// ============================================================
+// MAIN APP INIT
+// ============================================================
+function initMainApp() {
+  document.getElementById('mainApp').style.display = 'block';
+  document.getElementById('bottomNav').style.display = 'flex';
+  document.getElementById('emergencyFab').style.display = 'flex';
+  applyTheme(appState.theme);
+  buildParticles();
+
+  if (appState.lastPeriod) {
+    appState.cycleData = calcCycleData(appState.lastPeriod, appState.cycleLength, appState.periodDuration);
+    applyPhaseTheme(appState.cycleData.phase);
+  }
+
+  renderHome();
+  renderInsightsPage();
+  renderAnalytics();
+  setupJournal();
+  checkPWA();
+  setInterval(() => { if(appState.cycleData) renderSmartInsights(); }, 10000);
+}
+
+function applyPhaseTheme(phase) {
+  document.body.classList.remove('theme-follicular','theme-ovulation','theme-luteal');
+  const cls = PHASE_DATA[phase]?.themeClass;
+  if (cls) document.body.classList.add(cls);
+}
+
+// ============================================================
+// HOME PAGE
+// ============================================================
+function renderHome() {
+  const cd = appState.cycleData;
+  if (!cd) return;
+  const pd = PHASE_DATA[cd.phase];
+
+  // Profile
+  document.getElementById('profileName').textContent = `${appState.partnerName || 'Her'} & ${appState.userName || 'You'}`;
+  document.getElementById('profileSub').textContent = `Cycle Day ${cd.cycleDay} — ${pd.shortName} Phase`;
+
+  // Phase hero
+  document.getElementById('phaseTagText').textContent = pd.name;
+  document.getElementById('phaseTitle').textContent = pd.title;
+  document.getElementById('phaseDesc').textContent = pd.desc;
+  document.getElementById('phaseHero').style.background = pd.gradBg + ', var(--bg-glass)';
+
+  // Stats
+  animateCounter('statDay', cd.cycleDay);
+  animateCounter('statDaysLeft', Math.max(0, cd.daysToNextPeriod));
+  document.getElementById('statConf').textContent = cd.confidence + '%';
+
+  // Ring
+  const circumference = 2 * Math.PI * 76;
+  const offset = circumference * (1 - cd.cycleProgress / 100);
+  document.getElementById('ringProgress').style.strokeDasharray = circumference;
+  setTimeout(() => {
+    document.getElementById('ringProgress').style.strokeDashoffset = offset;
+  }, 300);
+  document.getElementById('ringDay').textContent = cd.cycleDay;
+  document.getElementById('ringCycleLen').textContent = cd.cycleLen;
+  document.getElementById('ringPhaseName').textContent = pd.name;
+
+  // Forecast
+  setTimeout(() => {
+    setForecast('fcEnergy', 'fcEnergyBar', pd.energy.val, pd.energy.pct);
+    setForecast('fcSens', 'fcSensBar', pd.sensitivity.val, pd.sensitivity.pct);
+    setForecast('fcAffection', 'fcAffectionBar', pd.affection.val, pd.affection.pct);
+    setForecast('fcSocial', 'fcSocialBar', pd.social.val, pd.social.pct);
+  }, 500);
+
+  renderSmartInsights();
+  renderTimeline();
+}
+
+function setForecast(valId, barId, val, pct) {
+  document.getElementById(valId).textContent = val;
+  document.getElementById(barId).style.width = pct + '%';
+}
+
+function animateCounter(id, target) {
+  const el = document.getElementById(id);
+  let start = 0; const dur = 1200;
+  const startTime = performance.now();
+  function step(now) {
+    const p = Math.min((now - startTime) / dur, 1);
+    const ease = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(ease * target);
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function renderSmartInsights() {
+  const cd = appState.cycleData;
+  if (!cd) return;
+  const pd = PHASE_DATA[cd.phase];
+  const container = document.getElementById('smartInsights');
+  const insights = pd.insights;
+  let html = '';
+  insights.forEach((text, i) => {
+    html += `<div class="smart-item" style="animation-delay:${i*0.08}s"><div class="smart-orb"></div><div class="smart-text">${text}</div></div>`;
+  });
+  if (cd.isPMS) html += `<div class="smart-item" style="animation-delay:${insights.length*0.08}s;border-color:rgba(255,120,120,0.2)"><div class="smart-orb" style="background:#ff8080"></div><div class="smart-text">PMS window — extra gentleness and reassurance needed now.</div></div>`;
+  container.innerHTML = html;
+}
+
+function renderTimeline() {
+  const cd = appState.cycleData;
+  if (!cd) return;
+  const inner = document.getElementById('timelineInner');
+  const today = cd.today;
+
+  const events = [
+    { label: 'Period', date: cd.nextPeriodDate, color: '#d4688a', emoji: '🌑' },
+    { label: 'Ovulation', date: cd.ovulationDate, color: '#f4b85a', emoji: '🌕' },
+    { label: 'Fertile End', date: cd.fertileEnd, color: '#8ac47c', emoji: '🌿' },
+    { label: 'PMS Start', date: cd.pmsStart, color: '#b87dc4', emoji: '🌘' },
+  ].sort((a,b) => a.date - b.date);
+
+  const todayEvent = { label: 'Today', date: today, color: 'var(--accent)', emoji: '✦', isToday: true };
+
+  // Insert today in sorted order
+  let allEvents = [...events];
+  let inserted = false;
+  for (let i = 0; i < allEvents.length; i++) {
+    if (today <= allEvents[i].date && !inserted) {
+      allEvents.splice(i, 0, todayEvent);
+      inserted = true;
+      break;
+    }
+  }
+  if (!inserted) allEvents.push(todayEvent);
+
+  let html = '';
+  allEvents.forEach((ev, i) => {
+    const isToday = ev.isToday;
+    const daysFrom = Math.floor((ev.date - today) / 86400000);
+    const dayLabel = isToday ? 'Today' : (daysFrom === 0 ? 'Today' : (daysFrom > 0 ? `+${daysFrom}d` : `${daysFrom}d`));
+    const dateStr = ev.date.toLocaleDateString('en-US', {month:'short', day:'numeric'});
+    html += `<div class="timeline-item ${isToday ? 'timeline-event-today' : ''}">
+      <div style="font-size:18px">${ev.emoji}</div>
+      <div class="timeline-event-dot" style="background:${ev.color};${isToday ? 'box-shadow:0 0 12px '+ev.color : ''}"></div>
+      <div class="timeline-date">${isToday ? 'Today' : dateStr}</div>
+      <div class="timeline-event-label" style="color:${isToday ? 'var(--accent)' : 'var(--text-secondary)'}">${ev.label}</div>
+    </div>`;
+    if (i < allEvents.length - 1) {
+      html += `<div class="timeline-line"></div>`;
+    }
+  });
+  inner.innerHTML = html;
+}
+
+// ============================================================
+// INSIGHTS PAGE
+// ============================================================
+function renderInsightsPage() {
+  const cd = appState.cycleData;
+  if (!cd) return;
+  const pd = PHASE_DATA[cd.phase];
+
+  document.getElementById('insightPageSub').textContent = `${pd.name} — Day ${cd.cycleDay} of ${cd.cycleLen}`;
+
+  renderHormoneViz(pd);
+  renderRadar(pd);
+  renderInsightCards(pd);
+  renderSupportList(pd);
+  renderAvoidList(pd);
+}
+
+function renderHormoneViz(pd) {
+  const container = document.getElementById('hormoneViz');
+  const hormones = [
+    { name: 'Estrogen', val: pd.estrogen, color: 'var(--accent)' },
+    { name: 'Progesterone', val: pd.progesterone, color: 'var(--accent2)' },
+    { name: 'Mood Index', val: pd.mood, color: '#80d4b8' },
+    { name: 'Energy Level', val: pd.energyHormone, color: '#d4c080' },
+  ];
+  let html = '';
+  hormones.forEach(h => {
+    const wavePoints = generateWavePath(h.val, 280, 44);
+    html += `<div class="hormone-row">
+      <div class="hormone-header">
+        <div class="hormone-name">${h.name}</div>
+        <div class="hormone-val" style="color:${h.color}">${h.val}%</div>
+      </div>
+      <div class="hormone-wave-wrap">
+        <svg class="hormone-wave" viewBox="0 0 280 44" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="wg${h.name.replace(/\s/g,'')}" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="${h.color}" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="${h.color}" stop-opacity="0.05"/>
+            </linearGradient>
+          </defs>
+          <path d="${wavePoints.area}" fill="url(#wg${h.name.replace(/\s/g,'')})"/>
+          <path d="${wavePoints.line}" fill="none" stroke="${h.color}" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function generateWavePath(amplitude, w, h) {
+  const pts = 40;
+  const baseY = h * 0.65;
+  const amp = (amplitude / 100) * h * 0.45;
+  let lineD = '', areaD = '';
+  const points = [];
+  for (let i = 0; i <= pts; i++) {
+    const x = (i / pts) * w;
+    const t = (i / pts) * Math.PI * 2;
+    const y = baseY - amp * (Math.sin(t) + Math.sin(t * 2.3 + 0.5) * 0.4);
+    points.push([x, y]);
+  }
+  lineD = `M ${points[0][0]},${points[0][1]}`;
+  points.slice(1).forEach(([x,y], i) => {
+    const [px,py] = points[i];
+    const cx = (px + x) / 2;
+    lineD += ` C ${cx},${py} ${cx},${y} ${x},${y}`;
+  });
+  areaD = lineD + ` L ${w},${h} L 0,${h} Z`;
+  return { line: lineD, area: areaD };
+}
+
+function renderRadar(pd) {
+  const svg = document.getElementById('radarSvg');
+  const labelsContainer = document.getElementById('radarLabels');
+  const r = pd.radar;
+  const metrics = [
+    { key: 'emotional', label: 'Emotional\nOpenness' },
+    { key: 'sensitivity', label: 'Sensitivity' },
+    { key: 'conversation', label: 'Conversation' },
+    { key: 'affection', label: 'Affection' },
+    { key: 'stability', label: 'Stability' },
+    { key: 'social', label: 'Social\nEnergy' },
+  ];
+  const cx = 100, cy = 100, maxR = 75;
+  const n = metrics.length;
+  const color = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#d4688a';
+  const color2 = getComputedStyle(document.documentElement).getPropertyValue('--accent2').trim() || '#9b6bb5';
+
+  let svgContent = '';
+  // Background rings
+  [0.25, 0.5, 0.75, 1].forEach(scale => {
+    const pts = metrics.map((_, i) => {
+      const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+      return [cx + maxR * scale * Math.cos(angle), cy + maxR * scale * Math.sin(angle)];
+    });
+    svgContent += `<polygon points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>`;
+  });
+  // Axes
+  metrics.forEach((_, i) => {
+    const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+    svgContent += `<line x1="${cx}" y1="${cy}" x2="${cx + maxR * Math.cos(angle)}" y2="${cy + maxR * Math.sin(angle)}" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>`;
+  });
+  // Data polygon
+  const dataPts = metrics.map((m, i) => {
+    const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+    const val = r[m.key] / 100;
+    return [cx + maxR * val * Math.cos(angle), cy + maxR * val * Math.sin(angle)];
+  });
+  svgContent += `<defs>
+    <linearGradient id="radarGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="${color}" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="${color2}" stop-opacity="0.2"/>
+    </linearGradient>
+  </defs>`;
+  svgContent += `<polygon points="${dataPts.map(p=>p.join(',')).join(' ')}" fill="url(#radarGrad)" stroke="${color}" stroke-width="1.5" opacity="0.9"/>`;
+  dataPts.forEach(([x,y]) => {
+    svgContent += `<circle cx="${x}" cy="${y}" r="3" fill="${color}" opacity="0.9"/>`;
+  });
+  svg.innerHTML = svgContent;
+
+  // Labels
+  let labelsHtml = '';
+  metrics.forEach(m => {
+    labelsHtml += `<div class="radar-metric">
+      <div class="radar-metric-val">${r[m.key]}</div>
+      <div class="radar-metric-label">${m.label.replace('\\n','<br>')}</div>
+    </div>`;
+  });
+  labelsContainer.innerHTML = labelsHtml;
+}
+
+function renderInsightCards(pd) {
+  const container = document.getElementById('insightCards');
+  const cards = [
+    {
+      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>`,
+      title: 'Emotional State',
+      preview: `${pd.emotions[0]}`,
+      body: pd.emotions.map(e => `<div class="insight-tag">${e}</div>`).join(''),
+      full: `<p class="insight-text">During the ${pd.name.toLowerCase()}, her emotional landscape shifts in characteristic ways. Understanding these patterns allows you to anticipate her needs before she has to ask — one of the most powerful ways to show love.</p>`
+    },
+    {
+      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12.5 19.79 19.79 0 0 1 1.61 3.87 2 2 0 0 1 3.59 1.68h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.22a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.74 16.92z"></path></svg>`,
+      title: 'Communication Needs',
+      preview: 'How to approach conversations today',
+      body: `<p class="insight-text">Her communication style shifts with her cycle. Right now, ${getCommStyle(pd)}. The key is to match her current emotional mode rather than your own defaults.</p>`,
+      full: ''
+    },
+    {
+      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`,
+      title: 'Affection & Intimacy',
+      preview: `Affection tendency: ${pd.affection.val}`,
+      body: `<p class="insight-text">${getAffectionNote(pd)}</p>`,
+      full: ''
+    },
+    {
+      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M12 6v6l4 2"></path></svg>`,
+      title: 'Ideal Timing Today',
+      preview: 'Best moments for connection',
+      body: `<p class="insight-text">${getTimingNote(pd)}</p>`,
+      full: ''
+    }
+  ];
+
+  let html = '';
+  cards.forEach((c, i) => {
+    html += `<div class="insight-card" onclick="toggleInsightCard(this)">
+      <div class="insight-header">
+        <div class="insight-icon-wrap">${c.icon}</div>
+        <div class="insight-title-wrap">
+          <div class="insight-title">${c.title}</div>
+          <div class="insight-preview">${c.preview}</div>
+        </div>
+        <div class="insight-chevron">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </div>
+      </div>
+      <div class="insight-body">
+        <div class="insight-body-inner">
+          ${c.full}
+          <div class="insight-tags" style="${c.body.includes('insight-tag') ? '' : 'display:block'}">${c.body}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function getCommStyle(pd) {
+  const styles = {
+    menstrual: 'she needs gentle check-ins rather than long conversations. Ask simple questions, listen more than you speak, and avoid problem-solving mode',
+    follicular: 'she\'s open and engaged. Deep, meaningful conversations land well now. She wants to think out loud, explore ideas, and feel intellectually connected',
+    ovulation: 'she\'s expressive and confident. She loves open, energetic dialogue. Match her enthusiasm and be present in conversation',
+    luteal: 'she needs to feel heard and validated before anything else. Avoid giving unsolicited advice. Reflect her feelings back with empathy'
+  };
+  return styles[pd.shortName.toLowerCase()] || styles.follicular;
+}
+
+function getAffectionNote(pd) {
+  const notes = {
+    menstrual: 'Physical touch can be comforting but should be gentle and non-demanding. A long hug, sitting close, or holding her hand can mean everything. Ask before initiating more — she may need softness over intensity.',
+    follicular: 'She\'s warming up to connection again. Playful affection, light touches, and warm gestures feel natural. She\'s becoming more receptive to both emotional and physical closeness.',
+    ovulation: 'Affection is at its fullest expression right now. She wants to feel desired, beautiful, and deeply connected. This is a time for closeness — don\'t hold back.',
+    luteal: 'She needs reassuring, comforting affection more than anything. Long hugs, physical presence, and non-sexual closeness are especially meaningful. Physical warmth soothes her anxiety significantly.'
+  };
+  return notes[pd.shortName.toLowerCase()] || notes.follicular;
+}
+
+function getTimingNote(pd) {
+  const notes = {
+    menstrual: 'Mornings can be the hardest. Evenings tend to be softer — especially after she\'s rested. Small connection moments (a text, a check-in, sitting together) distributed throughout the day are better than one long interaction.',
+    follicular: 'She\'s energized in the morning and creative by afternoon. Plan your most meaningful interactions for daytime when her energy is rising. She\'s also more open after a shared activity.',
+    ovulation: 'Any time of day is excellent right now. She\'s operating at peak capacity. Evenings feel especially romantic and connected during this phase.',
+    luteal: 'Early evenings — after work but before she\'s too tired — tend to be the most emotionally open window. Avoid late-night emotional conversations. Comfortable, low-stimulation environments help her regulate.'
+  };
+  return notes[pd.shortName.toLowerCase()] || notes.follicular;
+}
+
+function toggleInsightCard(card) {
+  card.classList.toggle('expanded');
+}
+
+function renderSupportList(pd) {
+  const container = document.getElementById('supportList');
+  let html = '';
+  pd.support.forEach((s, i) => {
+    html += `<div class="support-item"><div class="support-num">${i+1}</div><div class="support-text"><strong>${s.title}:</strong> ${s.text}</div></div>`;
+  });
+  container.innerHTML = html;
+}
+
+function renderAvoidList(pd) {
+  const container = document.getElementById('avoidList');
+  let html = '';
+  pd.avoid.forEach(a => {
+    html += `<div class="avoid-item"><div class="avoid-x">✗</div><div class="avoid-text">${a}</div></div>`;
+  });
+  container.innerHTML = html;
+}
+
+// ============================================================
+// JOURNAL
+// ============================================================
+function setupJournal() {
+  const today = new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
+  document.getElementById('journalDate').textContent = today;
+  renderJournalHistory();
+}
+
+function toggleMood(el) { el.classList.toggle('selected'); }
+function toggleSymptom(el) { el.classList.toggle('active'); }
+
+function saveJournalEntry() {
+  const moods = [...document.querySelectorAll('.mood-chip.selected')].map(el => el.textContent);
+  const symptoms = [...document.querySelectorAll('.symptom-item.active')].map(el => el.querySelector('.symptom-label').textContent);
+  const note = document.getElementById('journalNote').value.trim();
+  const cd = appState.cycleData;
+
+  const entry = {
+    id: Date.now(),
+    date: new Date().toISOString(),
+    moods, symptoms, note,
+    phase: cd?.phase || 'unknown',
+    cycleDay: cd?.cycleDay || 0
+  };
+
+  appState.journalEntries.unshift(entry);
+  if (appState.journalEntries.length > 60) appState.journalEntries.pop();
+  saveState();
+
+  // Reset
+  document.querySelectorAll('.mood-chip.selected').forEach(el => el.classList.remove('selected'));
+  document.querySelectorAll('.symptom-item.active').forEach(el => el.classList.remove('active'));
+  document.getElementById('journalNote').value = '';
+
+  renderJournalHistory();
+  showToast('Entry saved ✦');
+}
+
+function renderJournalHistory() {
+  const container = document.getElementById('journalHistory');
+  if (!appState.journalEntries.length) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📓</div><div class="empty-state-text">No entries yet. Start tracking her emotional patterns to unlock deeper insights.</div></div>`;
+    return;
+  }
+  let html = '';
+  appState.journalEntries.slice(0, 10).forEach(entry => {
+    const d = new Date(entry.date);
+    const dateStr = d.toLocaleDateString('en-US', {month:'short', day:'numeric', weekday:'short'});
+    const pd = PHASE_DATA[entry.phase];
+    html += `<div class="journal-entry">
+      <div class="journal-date">${dateStr} — ${pd?.shortName || 'Unknown'} Phase, Day ${entry.cycleDay}</div>
+      ${entry.moods.length ? `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">${entry.moods.map(m=>`<span style="background:var(--bg-glass);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:12px;color:var(--text-secondary)">${m}</span>`).join('')}</div>` : ''}
+      ${entry.symptoms.length ? `<div style="font-size:13px;color:var(--text-muted);margin-bottom:8px">Symptoms: ${entry.symptoms.join(', ')}</div>` : ''}
+      ${entry.note ? `<div style="font-size:14px;color:var(--text-secondary);line-height:1.6;font-style:italic">"${entry.note}"</div>` : ''}
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+// ============================================================
+// ANALYTICS
+// ============================================================
+function renderAnalytics() {
+  renderMiniChart('cycleConsistencyChart', [82, 88, 85, 90, 87, 92, 89], false);
+  renderMiniChart('moodTrendChart', [60, 72, 55, 80, 65, 70, 75], true);
+  renderPredictiveInsights();
+  renderPhaseSummary();
+}
+
+function renderMiniChart(id, values, alt) {
+  const container = document.getElementById(id);
+  if (!container) return;
+  const max = Math.max(...values);
+  let html = '';
+  values.forEach((v, i) => {
+    const pct = (v / max) * 100;
+    html += `<div class="chart-bar ${alt ? 'accent2' : ''}" style="height:${pct}%;opacity:${0.5 + (i/values.length)*0.5}"></div>`;
+  });
+  container.innerHTML = html;
+  // Animate
+  setTimeout(() => {
+    container.querySelectorAll('.chart-bar').forEach((b, i) => {
+      b.style.transition = `height 1s cubic-bezier(0.4,0,0.2,1) ${i*0.05}s`;
+    });
+  }, 100);
+}
+
+function renderPredictiveInsights() {
+  const cd = appState.cycleData;
+  const container = document.getElementById('predictiveInsights');
+  if (!cd) return;
+
+  const insights = [
+    `Next period predicted around ${cd.nextPeriodDate.toLocaleDateString('en-US', {month:'long', day:'numeric'})} (${cd.daysToNextPeriod} days away).`,
+    `Ovulation window expected around ${cd.ovulationDate.toLocaleDateString('en-US', {month:'long', day:'numeric'})}.`,
+    `PMS sensitivity zone begins ${cd.pmsStart.toLocaleDateString('en-US', {month:'long', day:'numeric'})} — prepare extra patience.`,
+    `Energy typically peaks around ovulation — ideal time for special plans together.`,
+    `Sensitivity usually increases 5–7 days before menstruation begins.`,
+    `Current prediction confidence: ${cd.confidence}% based on ${Math.floor((cd.today - cd.lastPeriod)/86400000)} days of tracking data.`,
+  ];
+
+  let html = '';
+  insights.forEach((text, i) => {
+    html += `<div class="glass-card" style="margin-bottom:10px; padding:16px">
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:6px;flex-shrink:0;box-shadow:0 0 8px var(--glow)"></div>
+        <div style="font-size:14px;color:var(--text-secondary);line-height:1.6">${text}</div>
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function renderPhaseSummary() {
+  const container = document.getElementById('phaseSummaryCards');
+  const phases = ['menstrual', 'follicular', 'ovulation', 'luteal'];
+  let html = '';
+  phases.forEach(p => {
+    const pd = PHASE_DATA[p];
+    html += `<div class="glass-card" style="margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">
+        <div style="font-size:28px">${pd.emoji}</div>
+        <div>
+          <div style="font-size:15px;font-weight:500">${pd.name}</div>
+          <div style="font-size:12px;color:var(--text-muted)">${pd.title}</div>
+        </div>
+      </div>
+      <div style="font-size:13px;color:var(--text-secondary);line-height:1.6">${pd.desc}</div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+// ============================================================
+// EMERGENCY MODE
+// ============================================================
+function openEmergency() {
+  const cd = appState.cycleData;
+  const phase = cd?.phase || 'luteal';
+  const pd = PHASE_DATA[phase];
+  const em = pd.emergency;
+
+  let phrasesHtml = '';
+  em.phrases.forEach(p => {
+    phrasesHtml += `<div class="comfort-item"><div class="comfort-item-label">${p.label}</div><div class="comfort-item-text">${p.text}</div></div>`;
+  });
+  document.getElementById('comfortPhrases').innerHTML = phrasesHtml;
+
+  document.getElementById('careIdeas').innerHTML = em.care.map(c =>
+    `<div class="comfort-item"><div class="comfort-item-text">• ${c}</div></div>`
+  ).join('');
+
+  document.getElementById('comfortFoods').innerHTML = em.foods.map(f =>
+    `<div class="comfort-item"><div class="comfort-item-text">• ${f}</div></div>`
+  ).join('');
+
+  document.getElementById('neverSay').innerHTML = em.neverSay.map(s =>
+    `<div class="never-say-item"><div class="never-x">✗</div><div class="never-text">${s}</div></div>`
+  ).join('');
+
+  openModal('emergencyModal');
+}
+
+// ============================================================
+// MODAL SYSTEM
+// ============================================================
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeModalOnOverlay(e) {
+  if (e.target === e.currentTarget) closeModal(e.currentTarget.id);
+}
+
+function showEditCycle() {
+  document.getElementById('editLastPeriod').value = appState.lastPeriod;
+  document.getElementById('editCycleLength').value = appState.cycleLength;
+  document.getElementById('editPeriodDuration').value = appState.periodDuration;
+  openModal('editCycleModal');
+}
+
+function saveCycleEdit() {
+  const lp = document.getElementById('editLastPeriod').value;
+  const cl = parseInt(document.getElementById('editCycleLength').value);
+  const pd = parseInt(document.getElementById('editPeriodDuration').value);
+  if (!lp || !cl || !pd) return;
+  appState.lastPeriod = lp;
+  appState.cycleLength = cl;
+  appState.periodDuration = pd;
+  appState.cycleData = calcCycleData(lp, cl, pd);
+  saveState();
+  applyPhaseTheme(appState.cycleData.phase);
+  renderHome(); renderInsightsPage(); renderAnalytics();
+  closeModal('editCycleModal');
+  showToast('Cycle data updated ✦');
+}
+
+function showEditProfile() {
+  document.getElementById('editPartnerName').value = appState.partnerName;
+  document.getElementById('editUserName').value = appState.userName;
+  openModal('editProfileModal');
+}
+
+function saveProfileEdit() {
+  appState.partnerName = document.getElementById('editPartnerName').value.trim() || appState.partnerName;
+  appState.userName = document.getElementById('editUserName').value.trim() || appState.userName;
+  saveState();
+  renderHome();
+  closeModal('editProfileModal');
+  showToast('Profile updated ✦');
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const page = document.getElementById(`page-${name}`);
+  if (page) page.classList.add('active');
+  const navItem = document.getElementById(`nav-${name}`);
+  if (navItem) navItem.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ============================================================
+// UTILITIES
+// ============================================================
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = `position:fixed;bottom:120px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;padding:12px 24px;border-radius:24px;font-size:14px;z-index:9999;box-shadow:0 8px 32px var(--glow);animation:fadeIn 0.3s ease;pointer-events:none`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity 0.5s'; setTimeout(()=>t.remove(),500); }, 2000);
+}
+
+function exportData() {
+  const data = JSON.stringify({ ...appState, exported: new Date().toISOString() }, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'lunasync-data.json'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function confirmClearData() {
+  if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
+    localStorage.clear();
+    location.reload();
+  }
+}
+
+function dismissInstall() {
+  document.getElementById('installBanner').style.display = 'none';
+  localStorage.setItem('luna_install_dismissed', '1');
+}
+
+// ============================================================
+// PWA
+// ============================================================
+function checkPWA() {
+  if (!localStorage.getItem('luna_install_dismissed') && window.matchMedia('(display-mode: browser)').matches) {
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault(); deferredPrompt = e;
+      document.getElementById('installBanner').style.display = 'flex';
+      document.getElementById('installBanner').querySelector('.install-banner-text').onclick = () => {
+        deferredPrompt?.prompt();
+      };
+    });
+  }
+}
+
+// ============================================================
+// PARTICLES
+// ============================================================
+function buildParticles() {
+  const field = document.getElementById('particleField');
+  field.innerHTML = '';
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    const size = Math.random() * 3 + 1;
+    const left = Math.random() * 100;
+    const duration = Math.random() * 15 + 10;
+    const delay = Math.random() * 15;
+    const drift = (Math.random() - 0.5) * 100;
+    p.className = 'particle';
+    p.style.cssText = `width:${size}px;height:${size}px;left:${left}%;--drift:${drift}px;animation-duration:${duration}s;animation-delay:${delay}s;opacity:0`;
+    field.appendChild(p);
+  }
+}
+
+// ============================================================
+// SERVICE WORKER (Inline)
+// ============================================================
+const SW_CODE = `
+const CACHE = 'lunasync-v1';
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/'])));
+  self.skipWaiting();
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
+  self.clients.claim();
+});
+self.addEventListener('fetch', e => {
+  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).catch(() => caches.match('/'))));
+});`;
+
+function registerSW() {
+  if ('serviceWorker' in navigator) {
+    const blob = new Blob([SW_CODE], {type:'text/javascript'});
+    const url = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(url).catch(()=>{});
+  }
+}
+
+// ============================================================
+// BOOTSTRAP
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  loadState();
+  applyTheme(appState.theme || 'rose');
+
+  // Set default date for onboarding
+  const dateInput = document.getElementById('lastPeriod');
+  const defaultDate = new Date();
+  defaultDate.setDate(defaultDate.getDate() - 14);
+  dateInput.value = defaultDate.toISOString().split('T')[0];
+  dateInput.max = new Date().toISOString().split('T')[0];
+
+  if (appState.onboarded && appState.lastPeriod) {
+    document.getElementById('onboarding').style.display = 'none';
+    appState.cycleData = calcCycleData(appState.lastPeriod, appState.cycleLength, appState.periodDuration);
+    initMainApp();
+  }
+
+  registerSW();
+});
+</script>
+
+<!-- PWA MANIFEST inline -->
+<script>
+(function(){
+  const manifest = {
+    name: 'LunaSync',
+    short_name: 'LunaSync',
+    description: 'Emotionally intelligent relationship wellness',
+    start_url: '/',
+    display: 'standalone',
+    background_color: '#0f0814',
+    theme_color: '#d4688a',
+    icons: [{src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="40" fill="%230f0814"/><text y="128" x="96" text-anchor="middle" font-size="120" fill="%23d4688a">🌙</text></svg>', sizes:'192x192', type:'image/svg+xml'}]
+  };
+  const blob = new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'});
+  const link = document.createElement('link');
+  link.rel = 'manifest'; link.href = URL.createObjectURL(blob);
+  document.head.appendChild(link);
+})();
+</script>
+</body>
+  </html>
