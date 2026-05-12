@@ -10,13 +10,13 @@
 <title>LunaSync</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Nunito:wght@300;400;500;600&family=Italiana&display=swap" rel="stylesheet">
 
 <style>
 :root {
-  --accent: #d4688a;
-  --accent2: #9b6bb5;
-  --accent3: #e8a4b8;
+  --accent: #f4a0b5;
+  --accent2: #e07898;
+  --accent3: #fcd5e0;
   --bg-deep: #0f0814;
   --bg-mid: #1a0f22;
   --bg-surface: #231630;
@@ -25,17 +25,17 @@
   --text-primary: #f5eef8;
   --text-secondary: rgba(245,238,248,0.6);
   --text-muted: rgba(245,238,248,0.35);
-  --glow: rgba(212,104,138,0.3);
-  --glow2: rgba(155,107,181,0.25);
+  --glow: rgba(244,160,181,0.35);
+  --glow2: rgba(224,120,152,0.25);
   --border: rgba(255,255,255,0.08);
-  --border-accent: rgba(212,104,138,0.25);
-  --phase-color: #d4688a;
-  --phase-glow: rgba(212,104,138,0.35);
+  --border-accent: rgba(244,160,181,0.3);
+  --phase-color: #f4a0b5;
+  --phase-glow: rgba(244,160,181,0.4);
   --radius-sm: 12px;
   --radius-md: 18px;
   --radius-lg: 24px;
   --radius-xl: 32px;
-  --shadow-glow: 0 0 40px var(--glow), 0 0 80px rgba(212,104,138,0.1);
+  --shadow-glow: 0 0 40px var(--glow), 0 0 80px rgba(244,160,181,0.15);
   --transition: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -44,12 +44,15 @@
 .theme-ovulation { --phase-color: #f4b85a; --phase-glow: rgba(244,184,90,0.3); --accent: #e8a040; --accent2: #d4904a; --glow: rgba(232,160,64,0.3); }
 .theme-luteal { --phase-color: #b87dc4; --phase-glow: rgba(184,125,196,0.3); --accent: #a56ab8; --accent2: #9060a8; --glow: rgba(165,106,184,0.3); }
 
+/* PENDING THEME SAVE */
+.theme-pending-save { box-shadow: 0 0 0 3px rgba(244,160,181,0.5) !important; }
+
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Nunito', sans-serif;
   background: var(--bg-deep);
   color: var(--text-primary);
   min-height: 100vh;
@@ -110,18 +113,18 @@ body {
 #onboarding.hidden { opacity: 0; transform: scale(1.05); pointer-events: none; }
 
 .onboard-logo {
-  font-family: 'DM Serif Display', serif;
-  font-size: 42px; letter-spacing: -1px;
+  font-family: 'Italiana', serif;
+  font-size: 52px; letter-spacing: 2px;
   background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3));
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   animation: logoGlow 3s ease-in-out infinite;
 }
 @keyframes logoGlow {
   0%,100% { filter: drop-shadow(0 0 20px var(--glow)); }
   50% { filter: drop-shadow(0 0 40px var(--glow)); }
 }
-.onboard-tagline { color: var(--text-secondary); font-size: 15px; text-align: center; margin-bottom: 48px; letter-spacing: 0.3px; }
+.onboard-tagline { color: var(--text-secondary); font-size: 15px; text-align: center; margin-bottom: 48px; letter-spacing: 0.3px; line-height: 1.6; }
 
 .onboard-steps { width: 100%; }
 .onboard-step { display: none; animation: stepIn 0.5s var(--transition); }
@@ -129,22 +132,24 @@ body {
 @keyframes stepIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
 
 .step-label {
-  font-family: 'DM Serif Display', serif;
-  font-size: 22px; margin-bottom: 8px; color: var(--text-primary);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 30px; margin-bottom: 10px; color: var(--text-primary); line-height: 1.25;
+  font-weight: 500;
 }
-.step-sublabel { color: var(--text-secondary); font-size: 14px; margin-bottom: 24px; line-height: 1.5; }
+.step-sublabel { color: var(--text-secondary); font-size: 14px; margin-bottom: 28px; line-height: 1.65; }
 
 .input-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
 .luna-input {
   background: var(--bg-glass); border: 1px solid var(--border);
   border-radius: var(--radius-md); padding: 16px 18px;
   color: var(--text-primary); font-family: 'DM Sans', sans-serif;
-  font-size: 16px; outline: none; width: 100%;
+  font-size: 16px; font-weight: 400; outline: none; width: 100%;
   transition: border-color 0.3s, box-shadow 0.3s;
+  letter-spacing: 0.1px;
 }
 .luna-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(212,104,138,0.15); }
-.luna-input::placeholder { color: var(--text-muted); }
-label.field-label { font-size: 13px; color: var(--text-secondary); letter-spacing: 0.5px; text-transform: uppercase; }
+.luna-input::placeholder { color: var(--text-muted); font-weight: 300; }
+label.field-label { font-size: 11px; color: var(--text-secondary); letter-spacing: 0.8px; text-transform: uppercase; font-weight: 500; }
 
 .step-dots { display: flex; gap: 8px; justify-content: center; margin-bottom: 24px; }
 .step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: all 0.3s; }
@@ -153,11 +158,12 @@ label.field-label { font-size: 13px; color: var(--text-secondary); letter-spacin
 .btn-primary {
   width: 100%; padding: 18px; border-radius: var(--radius-lg);
   background: linear-gradient(135deg, var(--accent), var(--accent2));
-  color: white; font-family: 'DM Sans', sans-serif;
-  font-size: 16px; font-weight: 500; border: none; cursor: pointer;
+  color: white; font-family: 'Nunito', sans-serif;
+  font-size: 16px; font-weight: 600; border: none; cursor: pointer;
   position: relative; overflow: hidden;
   transition: transform 0.2s, box-shadow 0.3s;
   box-shadow: 0 8px 32px var(--glow);
+  letter-spacing: 0.3px;
 }
 .btn-primary::after {
   content: ''; position: absolute; inset: 0;
@@ -210,7 +216,7 @@ label.field-label { font-size: 13px; color: var(--text-secondary); letter-spacin
   padding: 56px 16px 16px; display: flex; align-items: center; justify-content: space-between;
 }
 .header-logo {
-  font-family: 'DM Serif Display', serif; font-size: 26px;
+  font-family: 'Italiana', serif; font-size: 28px; letter-spacing: 1.5px;
   background: linear-gradient(135deg, var(--accent), var(--accent2));
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
@@ -225,9 +231,9 @@ label.field-label { font-size: 13px; color: var(--text-secondary); letter-spacin
 
 /* SECTION LABELS */
 .section-label {
-  font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
   color: var(--text-muted); margin-bottom: 12px; margin-top: 28px;
-  padding: 0 2px;
+  padding: 0 2px; font-weight: 600;
 }
 
 /* GLASS CARD */
@@ -273,17 +279,51 @@ label.field-label { font-size: 13px; color: var(--text-secondary); letter-spacin
 @keyframes pulseDot { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.7; } }
 
 .phase-hero-title {
-  font-family: 'DM Serif Display', serif;
-  font-size: 28px; line-height: 1.2; margin-bottom: 8px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 34px; line-height: 1.2; margin-bottom: 10px; letter-spacing: 0.3px;
+  font-weight: 500;
 }
-.phase-hero-sub { color: var(--text-secondary); font-size: 14px; line-height: 1.5; margin-bottom: 20px; }
+.phase-hero-sub { color: var(--text-secondary); font-size: 14px; line-height: 1.7; margin-bottom: 20px; font-weight: 300; }
 
 .phase-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
 .phase-stat { text-align: center; }
 .phase-stat-val { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--accent); font-weight: 600; }
 .phase-stat-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
-/* CYCLE RING */
+/* PHASE STATS — animated pill cards */
+.phase-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.phase-stat {
+  text-align: center;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px; padding: 12px 6px;
+  position: relative; overflow: hidden;
+  transition: transform 0.3s var(--transition), background 0.3s;
+}
+.phase-stat::before {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  animation: statShimmer 2.5s ease-in-out infinite;
+  opacity: 0.7;
+}
+@keyframes statShimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.phase-stat:hover { transform: translateY(-2px); background: rgba(255,255,255,0.07); }
+.phase-stat-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; color: var(--accent); font-weight: 600;
+  line-height: 1;
+  animation: statPop 0.6s var(--transition);
+}
+@keyframes statPop {
+  0% { transform: scale(0.7); opacity: 0; }
+  60% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.phase-stat-label { font-size: 10px; color: var(--text-muted); margin-top: 5px; letter-spacing: 0.5px; font-weight: 600; text-transform: uppercase; }
 .cycle-ring-wrap {
   display: flex; align-items: center; justify-content: center;
   padding: 24px 0; position: relative;
@@ -299,10 +339,15 @@ label.field-label { font-size: 13px; color: var(--text-secondary); letter-spacin
 .ring-center {
   position: absolute; text-align: center;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
+  animation: ringFloat 4s ease-in-out infinite;
 }
-.ring-day { font-family: 'Playfair Display', serif; font-size: 44px; font-weight: 600; line-height: 1; color: var(--accent); }
-.ring-day-label { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-.ring-phase { font-size: 13px; color: var(--text-secondary); margin-top: 6px; font-style: italic; }
+@keyframes ringFloat {
+  0%,100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+.ring-day { font-family: 'Cormorant Garamond', serif; font-size: 48px; font-weight: 600; line-height: 1; color: var(--accent); }
+.ring-day-label { font-size: 10px; color: var(--text-muted); margin-top: 2px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; }
+.ring-phase { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--text-secondary); margin-top: 5px; font-style: italic; }
 
 /* EMOTIONAL FORECAST */
 .forecast-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -555,11 +600,11 @@ label.field-label { font-size: 13px; color: var(--text-secondary); letter-spacin
 .modal-overlay.open .modal-sheet { transform: translateY(0); }
 .modal-handle { width: 36px; height: 4px; border-radius: 2px; background: var(--border); margin: 0 auto 20px; }
 .modal-title {
-  font-family: 'DM Serif Display', serif; font-size: 22px;
-  margin-bottom: 8px; color: var(--text-primary);
+  font-family: 'Cormorant Garamond', serif; font-size: 26px;
+  margin-bottom: 8px; color: var(--text-primary); line-height: 1.2; font-weight: 500;
 }
-.modal-subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; }
-.modal-section-title { font-size: 13px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.8px; margin: 16px 0 8px; font-weight: 600; }
+.modal-subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.6; font-weight: 300; }
+.modal-section-title { font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 1.2px; margin: 20px 0 10px; font-weight: 600; }
 
 .comfort-item {
   background: var(--bg-glass); border: 1px solid var(--border);
@@ -611,10 +656,11 @@ label.field-label { font-size: 13px; color: var(--text-secondary); letter-spacin
 
 /* PAGE TITLES */
 .page-title {
-  font-family: 'DM Serif Display', serif;
-  font-size: 28px; margin-bottom: 4px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px; margin-bottom: 6px; line-height: 1.15; letter-spacing: 0.3px;
+  font-weight: 500;
 }
-.page-subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; }
+.page-subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; line-height: 1.65; font-weight: 300; }
 
 /* NOTIFICATION BADGE */
 .notif-badge {
@@ -648,10 +694,12 @@ label.field-label { font-size: 13px; color: var(--text-secondary); letter-spacin
 .save-btn {
   width: 100%; padding: 16px; border-radius: var(--radius-lg);
   background: linear-gradient(135deg, var(--accent), var(--accent2));
-  color: white; font-size: 15px; font-weight: 500;
+  color: white; font-size: 15px; font-weight: 600;
+  font-family: 'Nunito', sans-serif;
   border: none; cursor: pointer; margin-top: 16px;
   transition: transform 0.2s, box-shadow 0.3s;
   box-shadow: 0 6px 24px var(--glow);
+  letter-spacing: 0.3px;
 }
 .save-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 32px var(--glow); }
 .save-btn:active { transform: scale(0.97); }
@@ -706,9 +754,9 @@ label.field-label { font-size: 13px; color: var(--text-secondary); letter-spacin
       <div class="step-label">Welcome, Partner</div>
       <div class="step-sublabel">LunaSync helps you understand her emotional world — so you can show up for her in the ways that matter most.</div>
       <div class="input-group">
-        <label class="field-label">Her Name</label>
+        <label class="field-label">Her Name <span style="color:var(--text-muted);text-transform:none;letter-spacing:0;font-size:11px">(optional)</span></label>
         <input type="text" id="partnerName" class="luna-input" placeholder="e.g. Emma" maxlength="20">
-        <label class="field-label">Your Name</label>
+        <label class="field-label">Your Name <span style="color:var(--text-muted);text-transform:none;letter-spacing:0;font-size:11px">(optional)</span></label>
         <input type="text" id="userName" class="luna-input" placeholder="e.g. James" maxlength="20">
       </div>
       <button class="btn-primary" onclick="nextStep(1)">Continue →</button>
@@ -943,12 +991,20 @@ label.field-label { font-size: 13px; color: var(--text-secondary); letter-spacin
     <div class="settings-section">
       <div class="settings-section-title">Themes</div>
       <div class="theme-presets" id="settingsThemes">
-        <div class="theme-preset" style="background: linear-gradient(135deg, #d4688a, #9b6bb5)" data-theme="rose" onclick="selectTheme('rose', this)"><div class="theme-preset-label">Rose Bloom</div></div>
-        <div class="theme-preset" style="background: linear-gradient(135deg, #a87bc4, #7080d4)" data-theme="lavender" onclick="selectTheme('lavender', this)"><div class="theme-preset-label">Lavender</div></div>
-        <div class="theme-preset" style="background: linear-gradient(135deg, #6a2d7a, #2d1042)" data-theme="plum" onclick="selectTheme('plum', this)"><div class="theme-preset-label">Midnight Plum</div></div>
-        <div class="theme-preset" style="background: linear-gradient(135deg, #f4a0b5, #f8c8d8)" data-theme="sakura" onclick="selectTheme('sakura', this)"><div class="theme-preset-label">Sakura</div></div>
-        <div class="theme-preset" style="background: linear-gradient(135deg, #e8a878, #f0c8a0)" data-theme="peach" onclick="selectTheme('peach', this)"><div class="theme-preset-label">Peach Cream</div></div>
-        <div class="theme-preset" style="background: linear-gradient(135deg, #5899b8, #80c4d8)" data-theme="ocean" onclick="selectTheme('ocean', this)"><div class="theme-preset-label">Ocean Calm</div></div>
+        <div class="theme-preset" style="background: linear-gradient(135deg, #d4688a, #9b6bb5)" data-theme="rose" onclick="previewTheme('rose', this)"><div class="theme-preset-label">Rose Bloom</div></div>
+        <div class="theme-preset active" style="background: linear-gradient(135deg, #f4a0b5, #e07898)" data-theme="babypink" onclick="previewTheme('babypink', this)"><div class="theme-preset-label">Baby Pink ✦</div></div>
+        <div class="theme-preset" style="background: linear-gradient(135deg, #a87bc4, #7080d4)" data-theme="lavender" onclick="previewTheme('lavender', this)"><div class="theme-preset-label">Lavender</div></div>
+        <div class="theme-preset" style="background: linear-gradient(135deg, #6a2d7a, #2d1042)" data-theme="plum" onclick="previewTheme('plum', this)"><div class="theme-preset-label">Midnight Plum</div></div>
+        <div class="theme-preset" style="background: linear-gradient(135deg, #f4a0b5, #f8c8d8)" data-theme="sakura" onclick="previewTheme('sakura', this)"><div class="theme-preset-label">Sakura</div></div>
+        <div class="theme-preset" style="background: linear-gradient(135deg, #e8a878, #f0c8a0)" data-theme="peach" onclick="previewTheme('peach', this)"><div class="theme-preset-label">Peach Cream</div></div>
+        <div class="theme-preset" style="background: linear-gradient(135deg, #5899b8, #80c4d8)" data-theme="ocean" onclick="previewTheme('ocean', this)"><div class="theme-preset-label">Ocean Calm</div></div>
+      </div>
+      <div id="themeSaveBar" style="display:none; margin-top:12px; animation: fadeIn 0.3s ease;">
+        <div style="font-size:12px; color:var(--text-muted); text-align:center; margin-bottom:10px; font-style:italic">Previewing theme — tap save to keep it ✨</div>
+        <div style="display:flex; gap:10px;">
+          <button onclick="cancelThemePreview()" style="flex:1; padding:13px; border-radius:var(--radius-lg); background:transparent; border:1px solid var(--border); color:var(--text-secondary); font-size:14px; cursor:pointer; font-family:'Nunito',sans-serif;">Cancel</button>
+          <button onclick="saveTheme()" style="flex:2; padding:13px; border-radius:var(--radius-lg); background:linear-gradient(135deg,var(--accent),var(--accent2)); color:white; border:none; font-size:14px; font-weight:600; cursor:pointer; font-family:'Nunito',sans-serif; box-shadow:0 4px 16px var(--glow);">Save Theme ✦</button>
+        </div>
       </div>
     </div>
 
@@ -1119,7 +1175,9 @@ function applyTheme(name) {
   document.querySelectorAll('.theme-preset').forEach(p => {
     p.classList.toggle('active', p.dataset.theme === name);
   });
+  appState.theme = name;
   localStorage.setItem('luna_theme', name);
+  saveState();
 }
 
 function hexToRgba(hex, alpha) {
@@ -1421,21 +1479,37 @@ function saveState() {
 // ============================================================
 // ONBOARDING
 // ============================================================
+function showOnboardError(inputId, msg) {
+  const input = document.getElementById(inputId);
+  input.style.borderColor = '#ff7070';
+  input.style.boxShadow = '0 0 0 3px rgba(255,112,112,0.18)';
+  showToast('⚠️ ' + msg);
+  input.focus();
+  setTimeout(() => {
+    input.style.borderColor = '';
+    input.style.boxShadow = '';
+  }, 2500);
+}
+
 let currentOnboardStep = 1;
 
 function nextStep(step) {
   if (step === 1) {
     const name = document.getElementById('partnerName').value.trim();
     const uname = document.getElementById('userName').value.trim();
-    if (!name) { document.getElementById('partnerName').focus(); return; }
-    appState.partnerName = name;
-    appState.userName = uname || 'Partner';
+    appState.partnerName = name || 'Her';
+    appState.userName = uname || 'You';
   }
   if (step === 2) {
     const lp = document.getElementById('lastPeriod').value;
     const cl = parseInt(document.getElementById('cycleLength').value) || 28;
     const pd = parseInt(document.getElementById('periodDuration').value) || 5;
     if (!lp) { document.getElementById('lastPeriod').focus(); return; }
+    const selectedDate = new Date(lp);
+    const todayDate = new Date(); todayDate.setHours(0,0,0,0);
+    if (selectedDate > todayDate) {
+      showOnboardError('lastPeriod', "Last period date can't be in the future"); return;
+    }
     appState.lastPeriod = lp;
     appState.cycleLength = cl;
     appState.periodDuration = pd;
@@ -2032,7 +2106,10 @@ function closeModalOnOverlay(e) {
 }
 
 function showEditCycle() {
-  document.getElementById('editLastPeriod').value = appState.lastPeriod;
+  const todayStr = new Date().toISOString().split('T')[0];
+  const editLp = document.getElementById('editLastPeriod');
+  editLp.value = appState.lastPeriod;
+  editLp.max = todayStr;
   document.getElementById('editCycleLength').value = appState.cycleLength;
   document.getElementById('editPeriodDuration').value = appState.periodDuration;
   openModal('editCycleModal');
@@ -2043,6 +2120,12 @@ function saveCycleEdit() {
   const cl = parseInt(document.getElementById('editCycleLength').value);
   const pd = parseInt(document.getElementById('editPeriodDuration').value);
   if (!lp || !cl || !pd) return;
+  const selectedDate = new Date(lp);
+  const todayDate = new Date(); todayDate.setHours(0,0,0,0);
+  if (selectedDate > todayDate) {
+    showToast("⚠️ Date can't be in the future");
+    return;
+  }
   appState.lastPeriod = lp;
   appState.cycleLength = cl;
   appState.periodDuration = pd;
@@ -2218,4 +2301,4 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 </script>
 </body>
-  </html>
+</html>
